@@ -1,5 +1,9 @@
 # Qwen3-ASR-Studio
 
+<p align="center">
+  <a href="./README.md">中文</a> | <a href="./README.en.md">English</a>
+</p>
+
 一个功能丰富的网页应用，旨在为阿里云通义千问（Qwen）ASR 模型提供一个强大、高效且用户友好的操作界面。无论您是需要转录会议记录、整理语音笔记，还是进行任何形式的语音转文本工作，本工具都能为您提供流畅的体验。
 
 **[➡️ 访问在线应用](https://qwen3-asr-studio.pages.dev/)**
