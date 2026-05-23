@@ -14,7 +14,7 @@ A modern Web UI for Qwen ASR with recording, PWA support, local caching, and fas
 
 - Record audio and transcribe it in the browser.
 - PWA support for desktop and mobile workflows.
-- Includes ModelScope and Aliyun API backend examples.
+- Uses the official Qwen ASR OpenAI-compatible API.
 - Frontend built with Vite, React, and TypeScript.
 
 ## Quick Start
@@ -27,11 +27,10 @@ npm run dev
 ```
 
 The frontend development server normally starts at `http://localhost:5173`.
-For backend examples, enter `modelscope-api` or `aliyun-api` and run `npm install && npm run dev`.
 
 ## Configuration
 
-- Configure API credentials, model service endpoints, and runtime environment variables according to the selected backend.
+- Configure your Qwen API key in the in-app settings panel.
 
 ## Tech Stack
 
@@ -43,8 +42,6 @@ For backend examples, enter `modelscope-api` or `aliyun-api` and run `npm instal
 ## Project Structure
 
 - `asr-studio`: Vite + React frontend.
-- `modelscope-api`: Next.js API example for the ModelScope / Gradio deployment.
-- `aliyun-api`: Next.js API example for Aliyun Bailian / DashScope.
 
 ## Contributing
 

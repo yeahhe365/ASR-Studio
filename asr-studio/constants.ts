@@ -1,5 +1,5 @@
-export const DEFAULT_MODELSCOPE_API_URL = 'https://c0rpr74ughd0-deploy.space.z.ai/api/asr-inference';
-export const BAILIAN_API_URL = 'https://r0vrc7kjd4q0-deploy.space.z.ai/api/proxy/transcribe';
+export const QWEN_ASR_API_URL = 'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions';
+export const QWEN_ASR_MODEL = 'qwen3-asr-flash';
 
 export const PIP_WINDOW_OPTIONS = {
   width: 480,

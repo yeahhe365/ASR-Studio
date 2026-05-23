@@ -3,8 +3,7 @@ import { createPortal } from 'react-dom';
 import { Header } from './components/Header';
 import { AudioUploader, type AudioUploaderHandle } from './components/AudioUploader';
 import { ResultDisplay, type ResultDisplayHandle } from './components/ResultDisplay';
-import { ExampleButtons } from './components/ExampleButtons';
-import { ApiProvider, CompressionLevel, Language } from './types';
+import { CompressionLevel, Language } from './types';
 import type { HistoryItem, NoteItem, Notification, Theme } from './types';
 import { Toast } from './components/Toast';
 import { LoaderIcon } from './components/icons/LoaderIcon';
@@ -17,7 +16,6 @@ import { PipView } from './components/PipView';
 import { StopIcon } from './components/icons/StopIcon';
 import { CopyIcon } from './components/icons/CopyIcon';
 import { CheckIcon } from './components/icons/CheckIcon';
-import { DEFAULT_MODELSCOPE_API_URL } from './constants';
 import { useAudioDevices } from './hooks/useAudioDevices';
 import { useDocumentPip } from './hooks/useDocumentPip';
 import { useHistoryItems } from './hooks/useHistoryItems';
@@ -36,12 +34,6 @@ const parseCompressionLevel = (storedValue: string | null) => {
   return Object.values(CompressionLevel).includes(storedValue as CompressionLevel)
     ? (storedValue as CompressionLevel)
     : CompressionLevel.ORIGINAL;
-};
-
-const parseApiProvider = (storedValue: string | null) => {
-  return Object.values(ApiProvider).includes(storedValue as ApiProvider)
-    ? (storedValue as ApiProvider)
-    : ApiProvider.MODELSCOPE;
 };
 
 const parseTheme = (storedValue: string | null): Theme => {
@@ -66,11 +58,7 @@ export default function App() {
     parse: parseCompressionLevel,
   });
   const [selectedDeviceId, setSelectedDeviceId] = usePersistentState('selectedDeviceId', 'default');
-  const [apiProvider, setApiProvider] = usePersistentState('apiProvider', ApiProvider.MODELSCOPE, {
-    parse: parseApiProvider,
-  });
-  const [modelScopeApiUrl, setModelScopeApiUrl] = usePersistentState('modelScopeApiUrl', DEFAULT_MODELSCOPE_API_URL);
-  const [bailianApiKey, setBailianApiKey] = usePersistentState('bailianApiKey', '');
+  const [qwenApiKey, setQwenApiKey] = usePersistentState('qwenApiKey', '');
 
   const audioUploaderRef = useRef<AudioUploaderHandle>(null);
   const resultDisplayRef = useRef<ResultDisplayHandle>(null);
@@ -109,7 +97,6 @@ export default function App() {
     handleCancel,
     handleCopy,
     handleFileChange: changeAudioFile,
-    handleLoadExample,
     handleModeChange,
     handleRecordingChange,
     handleRetry,
@@ -124,9 +111,7 @@ export default function App() {
     enableItn,
     autoCopy,
     compressionLevel,
-    apiProvider,
-    modelScopeApiUrl,
-    bailianApiKey,
+    qwenApiKey,
     notify,
     clearNotification,
     saveNote,
@@ -214,21 +199,17 @@ export default function App() {
     setTheme('light');
     setCompressionLevel(CompressionLevel.ORIGINAL);
     setSelectedDeviceId('default');
-    setApiProvider(ApiProvider.MODELSCOPE);
-    setModelScopeApiUrl(DEFAULT_MODELSCOPE_API_URL);
-    setBailianApiKey('');
+    setQwenApiKey('');
     setIsSettingsOpen(false);
     notify('已恢复默认设置', 'success');
   }, [
     notify,
-    setApiProvider,
     setAutoCopy,
-    setBailianApiKey,
     setCompressionLevel,
     setContext,
     setEnableItn,
     setLanguage,
-    setModelScopeApiUrl,
+    setQwenApiKey,
     setSelectedDeviceId,
     setTheme,
   ]);
@@ -347,8 +328,6 @@ export default function App() {
               />
             </div>
           </section>
-
-          <ExampleButtons onLoadExample={handleLoadExample} disabled={isLoading} />
         </main>
       </div>
       {notification && <Toast message={notification.message} type={notification.type} onClose={() => setNotification(null)} />}
@@ -370,12 +349,8 @@ export default function App() {
         audioDevices={audioDevices}
         selectedDeviceId={selectedDeviceId}
         setSelectedDeviceId={setSelectedDeviceId}
-        apiProvider={apiProvider}
-        setApiProvider={setApiProvider}
-        modelScopeApiUrl={modelScopeApiUrl}
-        setModelScopeApiUrl={setModelScopeApiUrl}
-        bailianApiKey={bailianApiKey}
-        setBailianApiKey={setBailianApiKey}
+        qwenApiKey={qwenApiKey}
+        setQwenApiKey={setQwenApiKey}
         onClearHistory={handleClearHistory}
         onRestoreDefaults={handleRestoreDefaults}
         canInstall={canInstall}
@@ -390,9 +365,7 @@ export default function App() {
           language={language}
           enableItn={enableItn}
           selectedDeviceId={selectedDeviceId}
-          apiProvider={apiProvider}
-          modelScopeApiUrl={modelScopeApiUrl}
-          bailianApiKey={bailianApiKey}
+          qwenApiKey={qwenApiKey}
         />,
         pipContainer
       )}

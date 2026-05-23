@@ -9,9 +9,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "react-dom": "^19.1.1",
     "react": "^19.1.1",
-    "@gradio/client": "1.17.1",
+    "react-dom": "^19.1.1",
     "wavesurfer.js": "^7.10.1"
   },
   "devDependencies": {

@@ -23,6 +23,6 @@ The development server normally starts at `http://localhost:5173`.
 └── sw.js            Service worker
 ```
 
-## Backend Configuration
+## API Configuration
 
-The app can call either the ModelScope proxy API or the Aliyun Bailian proxy API. Configure provider, endpoint, and API key from the in-app settings panel.
+The app calls the official Qwen ASR OpenAI-compatible endpoint directly. Configure your Qwen API key from the in-app settings panel.

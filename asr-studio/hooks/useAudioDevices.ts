@@ -17,7 +17,7 @@ export function useAudioDevices() {
         const devices = await navigator.mediaDevices.enumerateDevices();
         setAudioDevices(devices.filter(device => device.kind === 'audioinput'));
       } catch (error) {
-        console.error('Could not enumerate audio devices or get microphone permission:', error);
+        console.warn('Could not enumerate audio devices or get microphone permission:', error);
       }
     };
 

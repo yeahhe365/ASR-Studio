@@ -56,7 +56,7 @@
 
 - **前端框架**: [React](https://react.dev/) + [TypeScript](https://www.typescriptlang.org/)
 - **UI 样式**: [Tailwind CSS](https://tailwindcss.com/)
-- **ASR 后端**: [阿里云通义千问 ASR 模型](https://modelscope.cn/models/Qwen/Qwen-Audio-Chat/summary) (通过 [Gradio](https://www.gradio.app/) Space 部署)
+- **ASR 接口**: Qwen 官方 OpenAI 兼容接口（`qwen3-asr-flash`）
 - **客户端技术**:
     - **Web Audio API**: 用于音频录制、处理和可视化。
     - **IndexedDB**: 用于在浏览器端持久化存储历史记录、笔记、缓存和用户设置。
@@ -103,13 +103,11 @@
 │   ├── services/          # ASR、音频处理、IndexedDB 缓存服务
 │   ├── App.tsx            # 主应用组件
 │   └── package.json       # 前端依赖与脚本
-├── modelscope-api/        # ModelScope / Gradio API 示例服务
-├── aliyun-api/            # 阿里云百炼 / DashScope API 示例服务
 ├── README.md              # 中文说明
 └── README.en.md           # English documentation
 ```
 
-如需运行后端示例，请分别进入 `modelscope-api` 或 `aliyun-api` 目录执行 `npm install` 和 `npm run dev`。
+应用直接调用 Qwen 官方 ASR API，无需维护额外的示例后端服务。
 
 ## 🤝 如何贡献
 
@@ -128,7 +126,6 @@
 ## 🙏 致谢
 
 - 感谢**阿里云通义千问团队**提供了如此出色的 ASR 模型。
-- 感谢 **Gradio 和 Hugging Face** 社区让 AI 应用的部署和分享变得简单。
 - 感谢 **React 和所有开源社区**的贡献者。
 ---
 

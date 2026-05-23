@@ -9,9 +9,8 @@ import {
   setCachedTranscription,
 } from '../services/cacheService';
 import { compressAudio } from '../services/audioService';
-import { loadExample, transcribeAudio } from '../services/gradioService';
+import { transcribeAudio } from '../services/qwenAsrService';
 import type {
-  ApiProvider,
   CompressionLevel,
   HistoryItem,
   Language,
@@ -40,9 +39,7 @@ type UseTranscriptionFlowOptions = {
   enableItn: boolean;
   autoCopy: boolean;
   compressionLevel: CompressionLevel;
-  apiProvider: ApiProvider;
-  modelScopeApiUrl: string;
-  bailianApiKey: string;
+  qwenApiKey: string;
   notify: Notify;
   clearNotification: () => void;
   saveNote: SaveNote;
@@ -59,9 +56,7 @@ export function useTranscriptionFlow({
   enableItn,
   autoCopy,
   compressionLevel,
-  apiProvider,
-  modelScopeApiUrl,
-  bailianApiKey,
+  qwenApiKey,
   notify,
   clearNotification,
   saveNote,
@@ -144,27 +139,6 @@ export function useTranscriptionFlow({
     }
   }, [audioUploaderRef, clearNotification, transcriptionMode]);
 
-  const handleLoadExample = useCallback(async (exampleId: number) => {
-    clearNotification();
-    setIsLoading(true);
-    setAudioFile(null);
-    setTranscription('');
-    setDetectedLanguage('');
-    setElapsedTime(null);
-
-    try {
-      const { file } = await loadExample(exampleId, setLoadingMessage);
-      setAudioFile(file);
-    } catch (error) {
-      console.error('Example loading error:', error);
-      const errorMessage = error instanceof Error ? error.message : '加载示例音频失败。';
-      notify(errorMessage, 'error');
-    } finally {
-      setIsLoading(false);
-      setLoadingMessage('');
-    }
-  }, [clearNotification, notify]);
-
   const transcribeNow = useCallback(async (file: File, bypassCache = false) => {
     abortControllerRef.current?.abort();
     const controller = new AbortController();
@@ -211,7 +185,7 @@ export function useTranscriptionFlow({
           context,
           language,
           enableItn,
-          { provider: apiProvider, modelScopeApiUrl, bailianApiKey },
+          { apiKey: qwenApiKey },
           setLoadingMessage,
           controller.signal
         );
@@ -253,9 +227,7 @@ export function useTranscriptionFlow({
       }
     }
   }, [
-    apiProvider,
     autoCopy,
-    bailianApiKey,
     compressionLevel,
     context,
     createHistoryItem,
@@ -263,9 +235,9 @@ export function useTranscriptionFlow({
     enableItn,
     insertTranscription,
     language,
-    modelScopeApiUrl,
     notify,
     prependHistoryItem,
+    qwenApiKey,
     transcriptionMode,
   ]);
 
@@ -385,7 +357,6 @@ export function useTranscriptionFlow({
     handleCancel,
     handleCopy,
     handleFileChange,
-    handleLoadExample,
     handleModeChange,
     handleRecordingChange,
     handleRetry,

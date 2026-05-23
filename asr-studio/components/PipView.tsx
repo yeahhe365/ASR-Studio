@@ -1,7 +1,7 @@
 
 import React, { useState, useRef, useCallback, useEffect } from 'react';
-import { transcribeAudio } from '../services/gradioService';
-import { Language, ApiProvider } from '../types';
+import { transcribeAudio } from '../services/qwenAsrService';
+import { Language } from '../types';
 import { MicrophoneIcon } from './icons/MicrophoneIcon';
 import { CheckIcon } from './icons/CheckIcon';
 import { CloseIcon } from './icons/CloseIcon';
@@ -19,9 +19,7 @@ interface PipViewProps {
   language: Language;
   enableItn: boolean;
   selectedDeviceId: string;
-  apiProvider: ApiProvider;
-  modelScopeApiUrl: string;
-  bailianApiKey: string;
+  qwenApiKey: string;
 }
 
 export const PipView: React.FC<PipViewProps> = ({ 
@@ -31,9 +29,7 @@ export const PipView: React.FC<PipViewProps> = ({
   language, 
   enableItn, 
   selectedDeviceId, 
-  apiProvider,
-  modelScopeApiUrl,
-  bailianApiKey 
+  qwenApiKey,
 }) => {
     type Status = 'idle' | 'recording' | 'processing' | 'success' | 'error';
     const [status, setStatus] = useState<Status>('idle');
@@ -54,7 +50,7 @@ export const PipView: React.FC<PipViewProps> = ({
         setMessage('正在识别...');
         try {
             const controller = new AbortController();
-            const config = { provider: apiProvider, modelScopeApiUrl, bailianApiKey };
+            const config = { apiKey: qwenApiKey };
             const result = await transcribeAudio(audioFile, context, language, enableItn, config, () => {}, controller.signal);
             
             if (result.transcription) {
@@ -75,7 +71,7 @@ export const PipView: React.FC<PipViewProps> = ({
             setMessage(msg);
             setStatus('error');
         }
-    }, [context, language, enableItn, onTranscriptionResult, apiProvider, modelScopeApiUrl, bailianApiKey]);
+    }, [context, language, enableItn, onTranscriptionResult, qwenApiKey]);
     
     const stopRecording = useCallback(() => {
         if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {

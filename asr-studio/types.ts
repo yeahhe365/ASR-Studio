@@ -1,9 +1,3 @@
-
-export enum ApiProvider {
-  MODELSCOPE = 'modelscope',
-  BAILIAN = 'bailian',
-}
-
 export type Theme = 'light' | 'dark';
 export type TranscriptionMode = 'single' | 'notes';
 

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { CloseIcon } from './icons/CloseIcon';
-import { Language, CompressionLevel, ApiProvider } from '../types';
+import { QWEN_ASR_API_URL, QWEN_ASR_MODEL } from '../constants';
+import { Language, CompressionLevel } from '../types';
 
 interface SettingsPanelProps {
   isOpen: boolean;
@@ -20,12 +21,8 @@ interface SettingsPanelProps {
   audioDevices: MediaDeviceInfo[];
   selectedDeviceId: string;
   setSelectedDeviceId: (deviceId: string) => void;
-  apiProvider: ApiProvider;
-  setApiProvider: (provider: ApiProvider) => void;
-  modelScopeApiUrl: string;
-  setModelScopeApiUrl: (url: string) => void;
-  bailianApiKey: string;
-  setBailianApiKey: (key: string) => void;
+  qwenApiKey: string;
+  setQwenApiKey: (key: string) => void;
   onClearHistory: () => void;
   onRestoreDefaults: () => void;
   disabled?: boolean;
@@ -94,12 +91,8 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
   audioDevices,
   selectedDeviceId,
   setSelectedDeviceId,
-  apiProvider,
-  setApiProvider,
-  modelScopeApiUrl,
-  setModelScopeApiUrl,
-  bailianApiKey,
-  setBailianApiKey,
+  qwenApiKey,
+  setQwenApiKey,
   onClearHistory,
   onRestoreDefaults,
   disabled,
@@ -187,31 +180,17 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
       case 'transcription':
         return (
           <div className="space-y-6">
-             <div className="flex flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between">
-              <label className="text-base font-medium">API 提供商</label>
-              <div className="flex items-center gap-1 p-1 rounded-lg bg-base-100 border border-base-300">
-                <button onClick={() => setApiProvider(ApiProvider.MODELSCOPE)} className={`px-3 py-1 text-sm font-medium rounded-md transition-colors ${apiProvider === ApiProvider.MODELSCOPE ? 'bg-brand-primary text-white' : 'hover:bg-base-300'}`}>ModelScope</button>
-                <button onClick={() => setApiProvider(ApiProvider.BAILIAN)} className={`px-3 py-1 text-sm font-medium rounded-md transition-colors ${apiProvider === ApiProvider.BAILIAN ? 'bg-brand-primary text-white' : 'hover:bg-base-300'}`}>阿里云百炼</button>
-              </div>
+            <div className="rounded-md border border-base-300 bg-base-100 px-3 py-3">
+              <p className="text-base font-semibold text-content-100">Qwen 官方 API</p>
+              <p className="mt-1 break-all text-sm text-content-200">{QWEN_ASR_MODEL} · {QWEN_ASR_API_URL}</p>
             </div>
-            {apiProvider === ApiProvider.BAILIAN && (
-              <div>
-                <label htmlFor="bailian-api-key-setting" className="text-base font-medium">
-                  API Key
-                  <p className="text-sm text-content-200 font-normal">从 <a href="https://bailian.console.aliyun.com/" target="_blank" rel="noopener noreferrer" className="text-brand-primary hover:underline">阿里云百炼平台</a> 获取。</p>
-                </label>
-                <input id="bailian-api-key-setting" type="password" value={bailianApiKey} onChange={(e) => setBailianApiKey(e.target.value)} disabled={disabled} placeholder="sk-xxxxxxxxxxxxxxxx" className="mt-2 w-full px-3 py-2 text-sm rounded-md shadow-sm bg-base-100 border border-base-300 text-content-100 placeholder-content-200 focus:outline-none focus:ring-2 focus:ring-brand-primary focus:border-brand-primary disabled:opacity-60" />
-              </div>
-            )}
-            {apiProvider === ApiProvider.MODELSCOPE && (
-              <div>
-                <label htmlFor="modelscope-api-url-setting" className="text-base font-medium">
-                  API Base URL
-                  <p className="text-sm text-content-200 font-normal">自定义 ModelScope API 端点 URL。</p>
-                </label>
-                <input id="modelscope-api-url-setting" type="text" value={modelScopeApiUrl} onChange={(e) => setModelScopeApiUrl(e.target.value)} disabled={disabled} placeholder="https://.../api/asr-inference" className="mt-2 w-full px-3 py-2 text-sm rounded-md shadow-sm bg-base-100 border border-base-300 text-content-100 placeholder-content-200 focus:outline-none focus:ring-2 focus:ring-brand-primary focus:border-brand-primary disabled:opacity-60" />
-              </div>
-            )}
+            <div>
+              <label htmlFor="qwen-api-key-setting" className="text-base font-medium">
+                API Key
+                <p className="text-sm text-content-200 font-normal">用于调用 Qwen 官方 OpenAI 兼容接口。</p>
+              </label>
+              <input id="qwen-api-key-setting" type="password" value={qwenApiKey} onChange={(e) => setQwenApiKey(e.target.value)} disabled={disabled} placeholder="sk-xxxxxxxxxxxxxxxx" className="mt-2 w-full px-3 py-2 text-sm rounded-md shadow-sm bg-base-100 border border-base-300 text-content-100 placeholder-content-200 focus:outline-none focus:ring-2 focus:ring-brand-primary focus:border-brand-primary disabled:opacity-60" />
+            </div>
             <hr className="border-base-300" />
             <div className="flex flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between">
               <label htmlFor="language-setting" className="text-base font-medium">语言</label>
@@ -251,11 +230,6 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
       case 'about':
         return (
           <div className="space-y-4 flex flex-col">
-            <img 
-              src="https://modelscope.oss-cn-beijing.aliyuncs.com/resource/00EE8C99-9C05-4236-A6D0-B58FF172D31B.png"
-              alt="ASR Studio Logo"
-              className="h-16 w-auto mx-auto mb-2" 
-            />
             <div className="flex justify-between items-center">
               <h3 className="text-lg font-semibold text-content-100">关于 ASR Studio</h3>
               <span className="text-xs font-mono text-content-200 bg-base-100 px-2 py-1 rounded-md">v1.1.0</span>
@@ -265,12 +239,8 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
               <a href="https://github.com/yeahhe365/ASR-Studio" target="_blank" rel="noopener noreferrer" className="mt-1 block text-sm text-brand-primary hover:underline">GitHub 仓库</a>
             </div>
             <div>
-              <p className="text-sm text-content-200">您可以在此处找到 ModelScope API 文档。</p>
-              <a href="https://c0rpr74ughd0-deploy.space.z.ai/" target="_blank" rel="noopener noreferrer" className="mt-1 text-sm text-brand-primary hover:underline block truncate">https://c0rpr74ughd0-deploy.space.z.ai/</a>
-            </div>
-            <div>
-              <p className="text-sm text-content-200">您可以在此处找到阿里云百炼 API 文档。</p>
-              <a href="https://r0vrc7kjd4q0-deploy.space.z.ai/" target="_blank" rel="noopener noreferrer" className="mt-1 text-sm text-brand-primary hover:underline block truncate">https://r0vrc7kjd4q0-deploy.space.z.ai/</a>
+              <p className="text-sm text-content-200">Qwen ASR API 文档。</p>
+              <a href="https://help.aliyun.com/zh/model-studio/qwen-speech-recognition" target="_blank" rel="noopener noreferrer" className="mt-1 text-sm text-brand-primary hover:underline block truncate">https://help.aliyun.com/zh/model-studio/qwen-speech-recognition</a>
             </div>
           </div>
         );
