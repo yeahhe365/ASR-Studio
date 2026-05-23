@@ -79,7 +79,7 @@
 
 2.  **进入前端项目并安装依赖**
     ```bash
-    cd qwen3-asr-studio
+    cd asr-studio
     pnpm install
     # 或者使用 npm
     # npm install
@@ -98,7 +98,7 @@
 
 ```text
 .
-├── qwen3-asr-studio/      # Vite + React 前端应用
+├── asr-studio/            # Vite + React 前端应用
 │   ├── components/        # 可复用 React 组件与图标
 │   ├── services/          # ASR、音频处理、IndexedDB 缓存服务
 │   ├── App.tsx            # 主应用组件

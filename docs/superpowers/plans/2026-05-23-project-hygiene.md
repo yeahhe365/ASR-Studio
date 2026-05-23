@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Clean up small maintainability issues in Qwen3-ASR-Studio without changing user-facing ASR behavior.
+**Goal:** Clean up small maintainability issues in ASR Studio without changing user-facing ASR behavior.
 
 **Architecture:** Keep the three existing subprojects intact. Apply low-risk hygiene changes first, then extract only isolated frontend concerns from `App.tsx` into small hooks and shared constants.
 
@@ -31,7 +31,7 @@
 - Modify: `modelscope-api/package-lock.json`
 - Modify: `README.md`
 - Modify: `README.en.md`
-- Modify: `qwen3-asr-studio/README.md`
+- Modify: `asr-studio/README.md`
 - Modify: `aliyun-api/README.md`
 - Modify: `modelscope-api/README.md`
 
@@ -53,14 +53,14 @@
 ### Task 4: Frontend Readability
 
 **Files:**
-- Create: `qwen3-asr-studio/constants.ts`
-- Create: `qwen3-asr-studio/hooks/useAudioDevices.ts`
-- Create: `qwen3-asr-studio/hooks/useElapsedTimer.ts`
-- Create: `qwen3-asr-studio/hooks/usePersistentState.ts`
-- Create: `qwen3-asr-studio/hooks/usePwaInstall.ts`
-- Modify: `qwen3-asr-studio/App.tsx`
-- Modify: `qwen3-asr-studio/types.ts`
-- Modify: `qwen3-asr-studio/services/gradioService.ts`
+- Create: `asr-studio/constants.ts`
+- Create: `asr-studio/hooks/useAudioDevices.ts`
+- Create: `asr-studio/hooks/useElapsedTimer.ts`
+- Create: `asr-studio/hooks/usePersistentState.ts`
+- Create: `asr-studio/hooks/usePwaInstall.ts`
+- Modify: `asr-studio/App.tsx`
+- Modify: `asr-studio/types.ts`
+- Modify: `asr-studio/services/gradioService.ts`
 
 - [x] Move shared API URLs and storage-backed settings out of the main component.
 - [x] Move isolated browser side effects into focused hooks.
@@ -69,7 +69,7 @@
 ### Task 5: Verification
 
 **Commands:**
-- `npm run build` in `qwen3-asr-studio`
+- `npm run build` in `asr-studio`
 - `npm run build` in `aliyun-api`
 - `npm run build` in `modelscope-api`
 - targeted grep checks for scaffold leftovers and tracked local artifacts

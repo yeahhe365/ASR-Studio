@@ -14,9 +14,7 @@ export const Header: React.FC<HeaderProps> = ({ onSettingsClick, onPipClick }) =
   return (
     <header className="flex min-w-0 items-center justify-between gap-3">
       <a
-        href="https://qwen3-asr-studio.pages.dev/"
-        target="_blank"
-        rel="noopener noreferrer"
+        href="/"
         className="flex min-w-0 items-center gap-3 text-content-100"
       >
         <span className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-brand-primary text-white shadow-sm sm:h-10 sm:w-10">

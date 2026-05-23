@@ -2,7 +2,7 @@
 
 ## Goal
 
-Continue improving `qwen3-asr-studio/App.tsx` readability by moving cohesive behavior into focused hooks. The user-facing ASR workflow, UI layout, settings, history, notes, and PiP behavior must stay unchanged.
+Continue improving `asr-studio/App.tsx` readability by moving cohesive behavior into focused hooks. The user-facing ASR workflow, UI layout, settings, history, notes, and PiP behavior must stay unchanged.
 
 ## Scope
 
@@ -10,7 +10,7 @@ This pass only touches the React frontend. It will not redesign the UI, change A
 
 ## Design
 
-`App.tsx` should become the composition layer for the page: it owns top-level wiring and renders components, while reusable behavior lives under `qwen3-asr-studio/hooks/`.
+`App.tsx` should become the composition layer for the page: it owns top-level wiring and renders components, while reusable behavior lives under `asr-studio/hooks/`.
 
 Add these hooks:
 
@@ -29,6 +29,6 @@ Hooks should accept `notify` or `onError` callbacks instead of creating their ow
 
 After implementation, run:
 
-- `npx tsc --noEmit` in `qwen3-asr-studio`
-- `npm run build` in `qwen3-asr-studio`
+- `npx tsc --noEmit` in `asr-studio`
+- `npm run build` in `asr-studio`
 - Existing full-repo verification can be repeated if shared files changed unexpectedly.

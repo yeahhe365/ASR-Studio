@@ -21,7 +21,7 @@ A modern Web UI for Qwen ASR with recording, PWA support, local caching, and fas
 
 ```bash
 git clone https://github.com/yeahhe365/Qwen3-ASR-Studio.git
-cd Qwen3-ASR-Studio/qwen3-asr-studio
+cd Qwen3-ASR-Studio/asr-studio
 npm install
 npm run dev
 ```
@@ -42,7 +42,7 @@ For backend examples, enter `modelscope-api` or `aliyun-api` and run `npm instal
 
 ## Project Structure
 
-- `qwen3-asr-studio`: Vite + React frontend.
+- `asr-studio`: Vite + React frontend.
 - `modelscope-api`: Next.js API example for the ModelScope / Gradio deployment.
 - `aliyun-api`: Next.js API example for Aliyun Bailian / DashScope.
 

@@ -2,9 +2,9 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Reduce `qwen3-asr-studio/App.tsx` to a thin composition layer by moving transcription flow, history/notes persistence, and PiP lifecycle into focused hooks without changing the user experience.
+**Goal:** Reduce `asr-studio/App.tsx` to a thin composition layer by moving transcription flow, history/notes persistence, and PiP lifecycle into focused hooks without changing the user experience.
 
-**Architecture:** Keep the current React UI and service layer intact. Extract the stateful browser and cache workflows into small hooks under `qwen3-asr-studio/hooks/`, let `App.tsx` own only page composition and cross-cutting wiring, and preserve the current settings, keyboard shortcut, and restore behaviors.
+**Architecture:** Keep the current React UI and service layer intact. Extract the stateful browser and cache workflows into small hooks under `asr-studio/hooks/`, let `App.tsx` own only page composition and cross-cutting wiring, and preserve the current settings, keyboard shortcut, and restore behaviors.
 
 **Tech Stack:** React, TypeScript, Vite, browser APIs, IndexedDB helpers, existing service modules.
 
@@ -13,9 +13,9 @@
 ### Task 1: Extract transcription workflow
 
 **Files:**
-- Create: `qwen3-asr-studio/hooks/useTranscriptionFlow.ts`
-- Modify: `qwen3-asr-studio/App.tsx`
-- Read-only references: `qwen3-asr-studio/services/audioService.ts`, `qwen3-asr-studio/services/gradioService.ts`, `qwen3-asr-studio/services/cacheService.ts`, `qwen3-asr-studio/components/ResultDisplay.tsx`, `qwen3-asr-studio/components/AudioUploader.tsx`
+- Create: `asr-studio/hooks/useTranscriptionFlow.ts`
+- Modify: `asr-studio/App.tsx`
+- Read-only references: `asr-studio/services/audioService.ts`, `asr-studio/services/gradioService.ts`, `asr-studio/services/cacheService.ts`, `asr-studio/components/ResultDisplay.tsx`, `asr-studio/components/AudioUploader.tsx`
 
 - [x] **Step 1: Create `useTranscriptionFlow` with the existing transcription state and actions**
 
@@ -29,15 +29,15 @@
 
   Run: `npx tsc --noEmit`
 
-  Expected: pass with no TypeScript errors in `qwen3-asr-studio`.
+  Expected: pass with no TypeScript errors in `asr-studio`.
 
 ### Task 2: Extract history and notes persistence
 
 **Files:**
-- Create: `qwen3-asr-studio/hooks/useHistoryItems.ts`
-- Create: `qwen3-asr-studio/hooks/useNotes.ts`
-- Modify: `qwen3-asr-studio/App.tsx`
-- Read-only references: `qwen3-asr-studio/services/cacheService.ts`, `qwen3-asr-studio/components/HistoryPanel.tsx`, `qwen3-asr-studio/components/NotesPanel.tsx`, `qwen3-asr-studio/types.ts`
+- Create: `asr-studio/hooks/useHistoryItems.ts`
+- Create: `asr-studio/hooks/useNotes.ts`
+- Modify: `asr-studio/App.tsx`
+- Read-only references: `asr-studio/services/cacheService.ts`, `asr-studio/components/HistoryPanel.tsx`, `asr-studio/components/NotesPanel.tsx`, `asr-studio/types.ts`
 
 - [x] **Step 1: Add `useHistoryItems` for loading and mutating history rows**
 
@@ -54,9 +54,9 @@
 ### Task 3: Extract PiP lifecycle management
 
 **Files:**
-- Create: `qwen3-asr-studio/hooks/useDocumentPip.ts`
-- Modify: `qwen3-asr-studio/App.tsx`
-- Read-only references: `qwen3-asr-studio/components/PipView.tsx`, `qwen3-asr-studio/constants.ts`, `qwen3-asr-studio/types.ts`
+- Create: `asr-studio/hooks/useDocumentPip.ts`
+- Modify: `asr-studio/App.tsx`
+- Read-only references: `asr-studio/components/PipView.tsx`, `asr-studio/constants.ts`, `asr-studio/types.ts`
 
 - [x] **Step 1: Create a hook that owns the PiP window and container**
 
@@ -70,7 +70,7 @@
 
   Run: `npm run build`
 
-  Expected: pass in `qwen3-asr-studio` with no runtime or type regressions.
+  Expected: pass in `asr-studio` with no runtime or type regressions.
 
 ### Task 4: Final hygiene check
 
