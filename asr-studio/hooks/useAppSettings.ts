@@ -34,6 +34,7 @@ export type AppSettingsValues = {
   mainstreamAsrModel: MainstreamAsrModel;
   mainstreamAsrApiKey: string;
   mainstreamAsrBaseUrl: string;
+  mainstreamAsrCustomModelName: string;
 };
 
 export type AppSettingsSetters = {
@@ -60,6 +61,7 @@ export type AppSettingsSetters = {
   setMainstreamAsrModel: Dispatch<SetStateAction<MainstreamAsrModel>>;
   setMainstreamAsrApiKey: Dispatch<SetStateAction<string>>;
   setMainstreamAsrBaseUrl: Dispatch<SetStateAction<string>>;
+  setMainstreamAsrCustomModelName: Dispatch<SetStateAction<string>>;
 };
 
 const DEFAULT_SETTINGS: AppSettingsValues = {
@@ -86,6 +88,7 @@ const DEFAULT_SETTINGS: AppSettingsValues = {
   mainstreamAsrModel: MainstreamAsrModel.OPENAI_GPT_4O_TRANSCRIBE,
   mainstreamAsrApiKey: '',
   mainstreamAsrBaseUrl: '',
+  mainstreamAsrCustomModelName: '',
 };
 
 const parseLanguage = createEnumParser(Language, DEFAULT_SETTINGS.language);
@@ -185,6 +188,10 @@ export function useAppSettings() {
     'mainstreamAsrBaseUrl',
     DEFAULT_SETTINGS.mainstreamAsrBaseUrl,
   );
+  const [mainstreamAsrCustomModelName, setMainstreamAsrCustomModelName] = usePersistentState(
+    'mainstreamAsrCustomModelName',
+    DEFAULT_SETTINGS.mainstreamAsrCustomModelName,
+  );
 
   const asrConfig: AsrProviderConfig = useMemo(
     () => ({
@@ -199,6 +206,7 @@ export function useAppSettings() {
       mainstreamAsrModel,
       mainstreamAsrApiKey,
       mainstreamAsrBaseUrl,
+      mainstreamAsrCustomModelName,
     }),
     [
       asrProvider,
@@ -207,6 +215,7 @@ export function useAppSettings() {
       geminiApiKey,
       mainstreamAsrApiKey,
       mainstreamAsrBaseUrl,
+      mainstreamAsrCustomModelName,
       mainstreamAsrModel,
       nvidiaNimApiKey,
       nvidiaNimBaseUrl,
@@ -239,6 +248,7 @@ export function useAppSettings() {
     setMainstreamAsrModel(DEFAULT_SETTINGS.mainstreamAsrModel);
     setMainstreamAsrApiKey(DEFAULT_SETTINGS.mainstreamAsrApiKey);
     setMainstreamAsrBaseUrl(DEFAULT_SETTINGS.mainstreamAsrBaseUrl);
+    setMainstreamAsrCustomModelName(DEFAULT_SETTINGS.mainstreamAsrCustomModelName);
   }, [
     setAsrProvider,
     setAutoCopy,
@@ -254,6 +264,7 @@ export function useAppSettings() {
     setLanguage,
     setMainstreamAsrApiKey,
     setMainstreamAsrBaseUrl,
+    setMainstreamAsrCustomModelName,
     setMainstreamAsrModel,
     setNoiseSuppression,
     setNvidiaNimApiKey,
@@ -281,6 +292,7 @@ export function useAppSettings() {
       language,
       mainstreamAsrApiKey,
       mainstreamAsrBaseUrl,
+      mainstreamAsrCustomModelName,
       mainstreamAsrModel,
       noiseSuppression,
       nvidiaNimApiKey,
@@ -306,6 +318,7 @@ export function useAppSettings() {
       language,
       mainstreamAsrApiKey,
       mainstreamAsrBaseUrl,
+      mainstreamAsrCustomModelName,
       mainstreamAsrModel,
       noiseSuppression,
       nvidiaNimApiKey,
@@ -334,6 +347,7 @@ export function useAppSettings() {
       setLanguage,
       setMainstreamAsrApiKey,
       setMainstreamAsrBaseUrl,
+      setMainstreamAsrCustomModelName,
       setMainstreamAsrModel,
       setNoiseSuppression,
       setNvidiaNimApiKey,
@@ -359,6 +373,7 @@ export function useAppSettings() {
       setLanguage,
       setMainstreamAsrApiKey,
       setMainstreamAsrBaseUrl,
+      setMainstreamAsrCustomModelName,
       setMainstreamAsrModel,
       setNoiseSuppression,
       setNvidiaNimApiKey,

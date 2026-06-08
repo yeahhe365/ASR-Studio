@@ -1,5 +1,5 @@
 import { MAINSTREAM_ASR_MODEL_LIBRARY_NAME } from '../../constants';
-import { AsrProvider, Language } from '../../types';
+import { AsrProvider, Language, MainstreamAsrModel } from '../../types';
 import { isValidHttpUrl } from '../remoteAudioFile';
 import type { ProviderRegistryEntry } from '../providerRegistryTypes';
 import {
@@ -15,6 +15,13 @@ import {
 
 const getConfiguredDescriptor = (config: Parameters<ProviderRegistryEntry['diagnose']>[0]) => {
   return getMainstreamAsrModelDescriptor(config.mainstreamAsrModel);
+};
+
+export const getConfiguredMainstreamAsrModelName = (config: Parameters<ProviderRegistryEntry['diagnose']>[0]) => {
+  const descriptor = getConfiguredDescriptor(config);
+  return descriptor.model === MainstreamAsrModel.CUSTOM_OPENAI_COMPATIBLE
+    ? (config.mainstreamAsrCustomModelName || '').trim()
+    : descriptor.modelName;
 };
 
 export const mainstreamAsrProviderEntry: ProviderRegistryEntry = {
@@ -36,21 +43,26 @@ export const mainstreamAsrProviderEntry: ProviderRegistryEntry = {
   },
   getSummaryDetails: (config) => {
     const descriptor = getConfiguredDescriptor(config);
-    return `${descriptor.label} · ${descriptor.modelName} · ${resolveMainstreamAsrEndpoint(
+    const modelName = getConfiguredMainstreamAsrModelName(config) || '未设置模型';
+    return `${descriptor.label} · ${modelName} · ${resolveMainstreamAsrEndpoint(
       descriptor,
       config.mainstreamAsrBaseUrl,
     )}`;
   },
   diagnose: (config) => {
     const descriptor = getConfiguredDescriptor(config);
+    const modelName = getConfiguredMainstreamAsrModelName(config);
     const normalizedBaseUrl = normalizeMainstreamAsrBaseUrl(config.mainstreamAsrBaseUrl);
     const hasValidCustomBaseUrl = !normalizedBaseUrl || isValidHttpUrl(normalizedBaseUrl);
+    const isCustomModel = descriptor.model === MainstreamAsrModel.CUSTOM_OPENAI_COMPATIBLE;
 
     return [
       {
         label: '模型',
-        status: 'ok',
-        detail: `${descriptor.label}：${descriptor.capability}。${descriptor.notes}`,
+        status: modelName ? 'ok' : 'error',
+        detail: modelName
+          ? `${descriptor.label}：${modelName}。${descriptor.notes}`
+          : '自定义模型名称未设置。请填写 OpenAI-compatible 接口接收的 model 值。',
       },
       {
         label: 'API Key',
@@ -61,10 +73,12 @@ export const mainstreamAsrProviderEntry: ProviderRegistryEntry = {
       },
       {
         label: 'Base URL',
-        status: hasValidCustomBaseUrl ? 'ok' : 'error',
+        status: hasValidCustomBaseUrl && (!isCustomModel || Boolean(normalizedBaseUrl)) ? 'ok' : 'error',
         detail: normalizedBaseUrl
           ? `将调用自定义端点 ${normalizedBaseUrl}。`
-          : `将调用官方端点 ${descriptor.endpoint}。`,
+          : isCustomModel
+            ? '自定义 Base URL 未设置。请填写完整 /audio/transcriptions 端点。'
+            : `将调用官方端点 ${descriptor.endpoint}。`,
       },
       {
         label: '语言与分段',
@@ -80,8 +94,17 @@ export const mainstreamAsrProviderEntry: ProviderRegistryEntry = {
   getReadinessError: (config, _file, audioSourceUrl) => {
     const descriptor = getConfiguredDescriptor(config);
     const normalizedBaseUrl = normalizeMainstreamAsrBaseUrl(config.mainstreamAsrBaseUrl);
+    const isCustomModel = descriptor.model === MainstreamAsrModel.CUSTOM_OPENAI_COMPATIBLE;
     if (!config.mainstreamAsrApiKey.trim()) {
       return `${descriptor.label} API Key 未设置。请在设置中配置。`;
+    }
+
+    if (isCustomModel && !(config.mainstreamAsrCustomModelName || '').trim()) {
+      return `${descriptor.label} 自定义模型名称未设置。请在设置中配置。`;
+    }
+
+    if (isCustomModel && !normalizedBaseUrl) {
+      return `${descriptor.label} 自定义 Base URL 未设置。请在设置中配置。`;
     }
 
     if (normalizedBaseUrl && !isValidHttpUrl(normalizedBaseUrl)) {
@@ -102,6 +125,7 @@ export const mainstreamAsrProviderEntry: ProviderRegistryEntry = {
       enableItn,
       {
         model: config.mainstreamAsrModel,
+        customModelName: config.mainstreamAsrCustomModelName,
         apiKey: config.mainstreamAsrApiKey,
         baseUrl: config.mainstreamAsrBaseUrl,
       },

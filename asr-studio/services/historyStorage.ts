@@ -38,6 +38,7 @@ export const normalizeStoredHistoryItem = (value: unknown): HistoryItem | null =
   const compressionLevel = isCompressionLevel(value.compressionLevel) ? value.compressionLevel : undefined;
   const nvidiaNimTask = isNvidiaNimTask(value.nvidiaNimTask) ? value.nvidiaNimTask : undefined;
   const mainstreamAsrModel = isMainstreamAsrModel(value.mainstreamAsrModel) ? value.mainstreamAsrModel : undefined;
+  const mainstreamAsrCustomModelName = getJsonString(value.mainstreamAsrCustomModelName).trim();
 
   return {
     id,
@@ -57,6 +58,7 @@ export const normalizeStoredHistoryItem = (value: unknown): HistoryItem | null =
     enableLongAudioChunking: getJsonBoolean(value.enableLongAudioChunking),
     nvidiaNimTask,
     mainstreamAsrModel,
+    mainstreamAsrCustomModelName: mainstreamAsrCustomModelName || undefined,
   };
 };
 

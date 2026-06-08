@@ -27,6 +27,7 @@ export const nvidiaNimTaskDisplayNames: Record<NvidiaNimTask, string> = {
 };
 
 export const mainstreamAsrModelDisplayNames: Record<MainstreamAsrModel, string> = {
+  [MainstreamAsrModel.CUSTOM_OPENAI_COMPATIBLE]: '自定义 OpenAI Compatible',
   [MainstreamAsrModel.OPENAI_GPT_4O_TRANSCRIBE]: 'OpenAI GPT-4o Transcribe',
   [MainstreamAsrModel.OPENAI_GPT_4O_MINI_TRANSCRIBE]: 'OpenAI GPT-4o Mini',
   [MainstreamAsrModel.OPENAI_GPT_4O_TRANSCRIBE_DIARIZE]: 'OpenAI GPT-4o Diarize',

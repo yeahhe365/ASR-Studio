@@ -93,4 +93,48 @@ describe('getProviderReadinessError', () => {
     );
     assert.equal(getProviderReadinessError(createConfig({ provider: AsrProvider.NVIDIA_NIM }), localAudio), null);
   });
+
+  test('requires a custom OpenAI-compatible model name and base URL', () => {
+    assert.match(
+      getProviderReadinessError(
+        createConfig({
+          provider: AsrProvider.MAINSTREAM,
+          mainstreamAsrModel: 'custom:openai-compatible' as MainstreamAsrModel,
+          mainstreamAsrApiKey: 'gateway-key',
+          mainstreamAsrBaseUrl: 'https://gateway.example.com/v1/audio/transcriptions',
+          mainstreamAsrCustomModelName: '',
+        } as Partial<AsrProviderConfig>),
+        localAudio,
+      ) || '',
+      /自定义模型名称/,
+    );
+
+    assert.match(
+      getProviderReadinessError(
+        createConfig({
+          provider: AsrProvider.MAINSTREAM,
+          mainstreamAsrModel: 'custom:openai-compatible' as MainstreamAsrModel,
+          mainstreamAsrApiKey: 'gateway-key',
+          mainstreamAsrBaseUrl: '',
+          mainstreamAsrCustomModelName: 'qwen3-asr-flash',
+        } as Partial<AsrProviderConfig>),
+        localAudio,
+      ) || '',
+      /自定义 Base URL/,
+    );
+
+    assert.equal(
+      getProviderReadinessError(
+        createConfig({
+          provider: AsrProvider.MAINSTREAM,
+          mainstreamAsrModel: 'custom:openai-compatible' as MainstreamAsrModel,
+          mainstreamAsrApiKey: 'gateway-key',
+          mainstreamAsrBaseUrl: 'https://gateway.example.com/v1/audio/transcriptions',
+          mainstreamAsrCustomModelName: 'qwen3-asr-flash',
+        } as Partial<AsrProviderConfig>),
+        localAudio,
+      ),
+      null,
+    );
+  });
 });

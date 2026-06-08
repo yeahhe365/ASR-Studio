@@ -53,6 +53,7 @@ export default function App() {
     setEnableItn,
     setEnableLongAudioChunking,
     setLanguage,
+    setMainstreamAsrCustomModelName,
     setMainstreamAsrModel,
     setNvidiaNimTask,
     setSelectedDeviceId,
@@ -293,6 +294,9 @@ export default function App() {
       if (isMainstreamAsrModel(item.mainstreamAsrModel)) {
         setMainstreamAsrModel(item.mainstreamAsrModel);
       }
+      if (typeof item.mainstreamAsrCustomModelName === 'string') {
+        setMainstreamAsrCustomModelName(item.mainstreamAsrCustomModelName);
+      }
       window.scrollTo({ top: 0, behavior: 'smooth' });
     },
     [
@@ -305,6 +309,7 @@ export default function App() {
       setEnableItn,
       setEnableLongAudioChunking,
       setLanguage,
+      setMainstreamAsrCustomModelName,
       setMainstreamAsrModel,
       setNvidiaNimTask,
       setTrimSilence,

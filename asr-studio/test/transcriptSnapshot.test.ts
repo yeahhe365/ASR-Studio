@@ -27,6 +27,7 @@ const baseSnapshotInput = {
   enableLongAudioChunking: true,
   nvidiaNimTask: NvidiaNimTask.TRANSCRIBE,
   mainstreamAsrModel: MainstreamAsrModel.OPENAI_GPT_4O_TRANSCRIBE,
+  mainstreamAsrCustomModelName: '',
 };
 
 describe('transcript save snapshots', () => {
@@ -84,6 +85,25 @@ describe('transcript save snapshots', () => {
       ),
       true,
     );
+
+    const savedCustomMainstreamSnapshot = createTranscriptSaveSnapshot({
+      ...baseSnapshotInput,
+      provider: AsrProvider.MAINSTREAM,
+      mainstreamAsrModel: MainstreamAsrModel.CUSTOM_OPENAI_COMPATIBLE,
+      mainstreamAsrCustomModelName: 'qwen3-asr-flash',
+    });
+    assert.equal(
+      isTranscriptSaveSnapshotDirty(
+        {
+          ...baseSnapshotInput,
+          provider: AsrProvider.MAINSTREAM,
+          mainstreamAsrModel: MainstreamAsrModel.CUSTOM_OPENAI_COMPATIBLE,
+          mainstreamAsrCustomModelName: 'local-asr-model',
+        },
+        savedCustomMainstreamSnapshot,
+      ),
+      true,
+    );
   });
 
   test('does not show dirty state for empty transcripts', () => {
@@ -126,6 +146,7 @@ describe('transcript save snapshots', () => {
       enableLongAudioChunking: baseSnapshotInput.enableLongAudioChunking,
       nvidiaNimTask: baseSnapshotInput.nvidiaNimTask,
       mainstreamAsrModel: baseSnapshotInput.mainstreamAsrModel,
+      mainstreamAsrCustomModelName: baseSnapshotInput.mainstreamAsrCustomModelName,
     });
 
     assert.equal(isTranscriptSaveSnapshotDirty(baseSnapshotInput, restoredSnapshot), false);

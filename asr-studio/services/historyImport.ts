@@ -81,6 +81,7 @@ export const parseHistoryImportPayload = (
       const mainstreamAsrModel = getJsonEnumValue(MainstreamAsrModel, record.mainstreamAsrModel) as
         | MainstreamAsrModel
         | undefined;
+      const mainstreamAsrCustomModelName = getJsonString(record.mainstreamAsrCustomModelName).trim();
       const compressionLevel = getJsonEnumValue(CompressionLevel, record.compressionLevel) as
         | CompressionLevel
         | undefined;
@@ -102,6 +103,7 @@ export const parseHistoryImportPayload = (
         enableLongAudioChunking: getJsonBoolean(record.enableLongAudioChunking),
         nvidiaNimTask,
         mainstreamAsrModel,
+        mainstreamAsrCustomModelName: mainstreamAsrCustomModelName || undefined,
       };
     })
     .filter((item): item is HistoryItem => Boolean(item))

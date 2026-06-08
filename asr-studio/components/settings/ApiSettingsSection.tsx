@@ -139,6 +139,7 @@ const createProviderConfig = ({
   mainstreamAsrModel,
   mainstreamAsrApiKey,
   mainstreamAsrBaseUrl,
+  mainstreamAsrCustomModelName,
 }: ApiSettingsSectionProps['values']) => ({
   provider: asrProvider,
   qwenApiKey,
@@ -151,6 +152,7 @@ const createProviderConfig = ({
   mainstreamAsrModel,
   mainstreamAsrApiKey,
   mainstreamAsrBaseUrl,
+  mainstreamAsrCustomModelName,
 });
 
 export const ApiSettingsSection: React.FC<ApiSettingsSectionProps> = ({ values, setters, disabled }) => {

@@ -20,6 +20,7 @@ export interface AsrProviderConfig {
   mainstreamAsrModel: MainstreamAsrModel;
   mainstreamAsrApiKey: string;
   mainstreamAsrBaseUrl: string;
+  mainstreamAsrCustomModelName?: string;
 }
 
 export type Notification = {
@@ -54,6 +55,7 @@ export enum NvidiaNimTask {
 }
 
 export enum MainstreamAsrModel {
+  CUSTOM_OPENAI_COMPATIBLE = 'custom:openai-compatible',
   OPENAI_GPT_4O_TRANSCRIBE = 'openai:gpt-4o-transcribe',
   OPENAI_GPT_4O_MINI_TRANSCRIBE = 'openai:gpt-4o-mini-transcribe',
   OPENAI_GPT_4O_TRANSCRIBE_DIARIZE = 'openai:gpt-4o-transcribe-diarize',
@@ -117,6 +119,7 @@ export interface HistoryItem {
   enableLongAudioChunking?: boolean;
   nvidiaNimTask?: NvidiaNimTask;
   mainstreamAsrModel?: MainstreamAsrModel;
+  mainstreamAsrCustomModelName?: string;
 }
 
 export interface BeforeInstallPromptEvent extends Event {

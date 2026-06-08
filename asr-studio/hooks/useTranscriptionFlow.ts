@@ -42,6 +42,7 @@ type UpdateHistoryItem = (
       | 'enableLongAudioChunking'
       | 'nvidiaNimTask'
       | 'mainstreamAsrModel'
+      | 'mainstreamAsrCustomModelName'
     >
   >,
 ) => Promise<boolean>;
@@ -138,6 +139,7 @@ export function useTranscriptionFlow({
     enableLongAudioChunking,
     nvidiaNimTask: asrConfig.nvidiaNimTask,
     mainstreamAsrModel: asrConfig.mainstreamAsrModel,
+    mainstreamAsrCustomModelName: asrConfig.mainstreamAsrCustomModelName || '',
     notify,
     prependHistoryItem,
     updateHistoryItem,

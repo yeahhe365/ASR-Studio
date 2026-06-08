@@ -91,6 +91,25 @@ describe('transcription cache keys', () => {
     );
   });
 
+  test('uses the configured custom OpenAI-compatible model name in cache descriptors', () => {
+    assert.deepEqual(
+      createProviderCacheDescriptor(
+        createConfig({
+          provider: AsrProvider.MAINSTREAM,
+          mainstreamAsrModel: 'custom:openai-compatible' as MainstreamAsrModel,
+          mainstreamAsrBaseUrl: ' https://gateway.example.com/v1/audio/transcriptions/ ',
+          mainstreamAsrCustomModelName: ' qwen3-asr-flash ',
+        } as Partial<AsrProviderConfig>),
+      ),
+      {
+        provider: AsrProvider.MAINSTREAM,
+        model: 'qwen3-asr-flash',
+        vendor: 'custom',
+        baseUrl: 'https://gateway.example.com/v1/audio/transcriptions',
+      },
+    );
+  });
+
   test('separates ambiguous values and trims context', () => {
     const firstKey = createKey({
       source: createTranscriptionCacheSource('a:b'),

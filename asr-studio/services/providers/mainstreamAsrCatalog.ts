@@ -11,6 +11,7 @@ import {
 import { MainstreamAsrModel } from '../../types';
 
 export type MainstreamAsrVendor =
+  | 'custom'
   | 'openai'
   | 'groq'
   | 'deepgram'
@@ -40,6 +41,22 @@ export type MainstreamAsrModelDescriptor = {
 };
 
 export const mainstreamAsrModelDescriptors: Record<MainstreamAsrModel, MainstreamAsrModelDescriptor> = {
+  [MainstreamAsrModel.CUSTOM_OPENAI_COMPATIBLE]: {
+    model: MainstreamAsrModel.CUSTOM_OPENAI_COMPATIBLE,
+    vendor: 'custom',
+    transport: 'openai-compatible',
+    label: '自定义 OpenAI Compatible',
+    modelName: '',
+    endpoint: '',
+    authHeader: 'bearer',
+    capability: '自定义 Base URL 与模型名称',
+    notes: '用于 OpenAI-compatible /audio/transcriptions 网关、代理或本地部署模型。',
+    supportsLanguage: true,
+    supportsPrompt: true,
+    supportsItn: false,
+    supportsSegments: true,
+    baseUrlPlaceholder: MAINSTREAM_ASR_CUSTOM_BASE_URL_PLACEHOLDER,
+  },
   [MainstreamAsrModel.OPENAI_GPT_4O_TRANSCRIBE]: {
     model: MainstreamAsrModel.OPENAI_GPT_4O_TRANSCRIBE,
     vendor: 'openai',

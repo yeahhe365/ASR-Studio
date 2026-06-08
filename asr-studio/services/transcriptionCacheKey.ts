@@ -1,5 +1,12 @@
 import { DOUBAO_ASR_RESOURCE_ID, NVIDIA_NIM_ASR_MODEL } from '../constants';
-import { AsrProvider, NvidiaNimTask, type AsrProviderConfig, type CompressionLevel, type Language } from '../types';
+import {
+  AsrProvider,
+  MainstreamAsrModel,
+  NvidiaNimTask,
+  type AsrProviderConfig,
+  type CompressionLevel,
+  type Language,
+} from '../types';
 import { getMainstreamAsrModelDescriptor } from './providers/mainstreamAsrCatalog';
 import { normalizeMainstreamAsrBaseUrl } from './providers/mainstreamAsrProvider';
 import { normalizeNvidiaNimBaseUrl } from './providers/nvidiaNimProvider';
@@ -60,9 +67,13 @@ export const createProviderCacheDescriptor = (config: AsrProviderConfig) => {
 
   if (config.provider === AsrProvider.MAINSTREAM) {
     const descriptor = getMainstreamAsrModelDescriptor(config.mainstreamAsrModel);
+    const model =
+      descriptor.model === MainstreamAsrModel.CUSTOM_OPENAI_COMPATIBLE
+        ? (config.mainstreamAsrCustomModelName || '').trim()
+        : descriptor.modelName;
     return {
       provider: config.provider,
-      model: descriptor.modelName,
+      model,
       vendor: descriptor.vendor,
       baseUrl: normalizeMainstreamAsrBaseUrl(config.mainstreamAsrBaseUrl),
     };

@@ -36,6 +36,7 @@ type UpdateHistoryItem = (
       | 'enableLongAudioChunking'
       | 'nvidiaNimTask'
       | 'mainstreamAsrModel'
+      | 'mainstreamAsrCustomModelName'
     >
   >,
 ) => Promise<boolean>;
@@ -50,6 +51,7 @@ type TranscriptHistorySettings = {
   enableLongAudioChunking: boolean;
   nvidiaNimTask: NvidiaNimTask;
   mainstreamAsrModel: MainstreamAsrModel;
+  mainstreamAsrCustomModelName: string;
 };
 
 type UseTranscriptHistoryDraftOptions = TranscriptHistorySettings & {
@@ -86,6 +88,8 @@ const createHistoryPatch = (
   enableLongAudioChunking: settings.enableLongAudioChunking,
   nvidiaNimTask: settings.provider === AsrProvider.NVIDIA_NIM ? settings.nvidiaNimTask : undefined,
   mainstreamAsrModel: settings.provider === AsrProvider.MAINSTREAM ? settings.mainstreamAsrModel : undefined,
+  mainstreamAsrCustomModelName:
+    settings.provider === AsrProvider.MAINSTREAM ? settings.mainstreamAsrCustomModelName : undefined,
 });
 
 export function useTranscriptHistoryDraft({
@@ -98,6 +102,7 @@ export function useTranscriptHistoryDraft({
   enableLongAudioChunking,
   nvidiaNimTask,
   mainstreamAsrModel,
+  mainstreamAsrCustomModelName,
   notify,
   prependHistoryItem,
   updateHistoryItem,
@@ -117,6 +122,7 @@ export function useTranscriptHistoryDraft({
       enableLongAudioChunking,
       nvidiaNimTask: provider === AsrProvider.NVIDIA_NIM ? nvidiaNimTask : undefined,
       mainstreamAsrModel: provider === AsrProvider.MAINSTREAM ? mainstreamAsrModel : undefined,
+      mainstreamAsrCustomModelName: provider === AsrProvider.MAINSTREAM ? mainstreamAsrCustomModelName : undefined,
     }),
     [
       compressionLevel,
@@ -125,6 +131,7 @@ export function useTranscriptHistoryDraft({
       enableLongAudioChunking,
       language,
       mainstreamAsrModel,
+      mainstreamAsrCustomModelName,
       nvidiaNimTask,
       provider,
       trimSilence,
@@ -155,6 +162,7 @@ export function useTranscriptHistoryDraft({
       enableLongAudioChunking,
       nvidiaNimTask: provider === AsrProvider.NVIDIA_NIM ? nvidiaNimTask : undefined,
       mainstreamAsrModel: provider === AsrProvider.MAINSTREAM ? mainstreamAsrModel : undefined,
+      mainstreamAsrCustomModelName: provider === AsrProvider.MAINSTREAM ? mainstreamAsrCustomModelName : undefined,
     }),
     [
       compressionLevel,
@@ -164,6 +172,7 @@ export function useTranscriptHistoryDraft({
       enableLongAudioChunking,
       language,
       mainstreamAsrModel,
+      mainstreamAsrCustomModelName,
       nvidiaNimTask,
       provider,
       trimSilence,
@@ -194,6 +203,7 @@ export function useTranscriptHistoryDraft({
       enableLongAudioChunking,
       nvidiaNimTask,
       mainstreamAsrModel,
+      mainstreamAsrCustomModelName,
     }),
     [
       compressionLevel,
@@ -203,6 +213,7 @@ export function useTranscriptHistoryDraft({
       enableLongAudioChunking,
       language,
       mainstreamAsrModel,
+      mainstreamAsrCustomModelName,
       nvidiaNimTask,
       provider,
       trimSilence,
@@ -274,6 +285,7 @@ export function useTranscriptHistoryDraft({
           enableLongAudioChunking,
           nvidiaNimTask,
           mainstreamAsrModel,
+          mainstreamAsrCustomModelName,
         }),
       );
       return nextSegments;
@@ -284,6 +296,7 @@ export function useTranscriptHistoryDraft({
       enableLongAudioChunking,
       language,
       mainstreamAsrModel,
+      mainstreamAsrCustomModelName,
       nvidiaNimTask,
       provider,
       trimSilence,
@@ -305,6 +318,7 @@ export function useTranscriptHistoryDraft({
           enableLongAudioChunking,
           nvidiaNimTask,
           mainstreamAsrModel,
+          mainstreamAsrCustomModelName,
         },
         savedTranscriptSnapshot,
       ),
@@ -315,6 +329,7 @@ export function useTranscriptHistoryDraft({
       enableLongAudioChunking,
       language,
       mainstreamAsrModel,
+      mainstreamAsrCustomModelName,
       nvidiaNimTask,
       provider,
       savedTranscriptSnapshot,

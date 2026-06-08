@@ -27,6 +27,7 @@ export const createSerializableHistoryItems = (items: HistoryItem[]) => {
     enableLongAudioChunking: item.enableLongAudioChunking ?? null,
     nvidiaNimTask: item.nvidiaNimTask ?? null,
     mainstreamAsrModel: item.mainstreamAsrModel ?? null,
+    mainstreamAsrCustomModelName: item.mainstreamAsrCustomModelName ?? null,
     segments: item.segments || [],
     audioUrl: item.audioUrl || null,
   }));
@@ -98,6 +99,7 @@ const createMarkdownItem = (item: SerializableHistoryItem) => {
     `- 长音频切片：${formatBoolean(item.enableLongAudioChunking)}`,
     item.nvidiaNimTask ? `- NVIDIA 任务：${formatNvidiaNimTask(item.nvidiaNimTask)}` : '',
     item.mainstreamAsrModel ? `- 主流模型：${formatMainstreamAsrModel(item.mainstreamAsrModel)}` : '',
+    item.mainstreamAsrCustomModelName ? `- 自定义模型名称：${item.mainstreamAsrCustomModelName}` : '',
     item.segments.length ? `- 分段：${item.segments.length} 段` : '',
     item.audioUrl ? `- 音频 URL：${item.audioUrl}` : '',
   ].filter(Boolean);

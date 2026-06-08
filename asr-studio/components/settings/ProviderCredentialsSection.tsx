@@ -23,7 +23,7 @@ type ProviderCredentialsSectionProps = Pick<SettingsPanelProps, 'values' | 'sett
 interface CredentialInputProps {
   id: string;
   label: string;
-  type: 'password' | 'url';
+  type: 'password' | 'text' | 'url';
   value: string;
   onChange: (value: string) => void;
   disabled?: boolean;
@@ -75,6 +75,7 @@ export const ProviderCredentialsSection: React.FC<ProviderCredentialsSectionProp
     mainstreamAsrModel,
     mainstreamAsrApiKey,
     mainstreamAsrBaseUrl,
+    mainstreamAsrCustomModelName,
   } = values;
   const {
     setQwenApiKey,
@@ -87,6 +88,7 @@ export const ProviderCredentialsSection: React.FC<ProviderCredentialsSectionProp
     setMainstreamAsrModel,
     setMainstreamAsrApiKey,
     setMainstreamAsrBaseUrl,
+    setMainstreamAsrCustomModelName,
   } = setters;
 
   if (asrProvider === AsrProvider.QWEN) {
@@ -199,6 +201,7 @@ export const ProviderCredentialsSection: React.FC<ProviderCredentialsSectionProp
 
   if (asrProvider === AsrProvider.MAINSTREAM) {
     const descriptor = getMainstreamAsrModelDescriptor(mainstreamAsrModel);
+    const isCustomOpenAiCompatible = mainstreamAsrModel === MainstreamAsrModel.CUSTOM_OPENAI_COMPATIBLE;
     const baseUrlPlaceholder =
       descriptor.baseUrlPlaceholder || descriptor.endpoint || MAINSTREAM_ASR_CUSTOM_BASE_URL_PLACEHOLDER;
 
@@ -227,6 +230,18 @@ export const ProviderCredentialsSection: React.FC<ProviderCredentialsSectionProp
             </select>
             <p className={helpTextClassName}>{descriptor.notes}</p>
           </div>
+          {isCustomOpenAiCompatible ? (
+            <CredentialInput
+              id="mainstream-asr-custom-model-name-setting"
+              label="模型名称"
+              type="text"
+              value={mainstreamAsrCustomModelName}
+              onChange={setMainstreamAsrCustomModelName}
+              disabled={disabled}
+              placeholder="qwen3-asr-flash / whisper-large-v3 / local-asr-model"
+              helpText="会作为 multipart 请求中的 model 字段发送给 OpenAI-compatible 转写接口。"
+            />
+          ) : null}
           <CredentialInput
             id="mainstream-asr-api-key-setting"
             label="API Key"
@@ -239,13 +254,17 @@ export const ProviderCredentialsSection: React.FC<ProviderCredentialsSectionProp
           />
           <CredentialInput
             id="mainstream-asr-base-url-setting"
-            label="Base URL（可选）"
+            label={isCustomOpenAiCompatible ? 'Base URL' : 'Base URL（可选）'}
             type="url"
             value={mainstreamAsrBaseUrl}
             onChange={setMainstreamAsrBaseUrl}
             disabled={disabled}
             placeholder={baseUrlPlaceholder}
-            helpText="留空使用官方端点；只有兼容网关、代理或自托管服务需要填写。"
+            helpText={
+              isCustomOpenAiCompatible
+                ? '填写完整 OpenAI-compatible 转写端点，例如 https://example.com/v1/audio/transcriptions。'
+                : '留空使用官方端点；只有兼容网关、代理或自托管服务需要填写。'
+            }
           />
         </div>
       </SectionBlock>

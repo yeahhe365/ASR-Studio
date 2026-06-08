@@ -1,4 +1,4 @@
-import { Language, type MainstreamAsrModel, type TranscriptionResult, type TranscriptionSegment } from '../../types';
+import { Language, MainstreamAsrModel, type TranscriptionResult, type TranscriptionSegment } from '../../types';
 import { getAudioSourceUrl } from '../remoteAudioFile';
 import { getMainstreamAsrModelDescriptor, type MainstreamAsrModelDescriptor } from './mainstreamAsrCatalog';
 
@@ -6,6 +6,7 @@ type MainstreamAsrConfig = {
   model: MainstreamAsrModel;
   apiKey: string;
   baseUrl: string;
+  customModelName?: string;
 };
 
 type OpenAiCompatibleResponse = {
@@ -474,12 +475,13 @@ const getDeepgramTranscript = (result: DeepgramResponse) => {
 const createOpenAiCompatibleFormData = (
   audioFile: File,
   descriptor: MainstreamAsrModelDescriptor,
+  modelName: string,
   context: string,
   language: Language,
 ) => {
   const formData = new FormData();
   formData.append('file', audioFile, audioFile.name || 'audio.wav');
-  formData.append('model', descriptor.modelName);
+  formData.append('model', modelName);
   formData.append('response_format', 'verbose_json');
 
   const apiLanguage = getApiLanguage(language);
@@ -499,6 +501,7 @@ const transcribeWithOpenAiCompatible = async (
   context: string,
   language: Language,
   descriptor: MainstreamAsrModelDescriptor,
+  modelName: string,
   endpoint: string,
   headers: Record<string, string>,
   signal: AbortSignal,
@@ -506,7 +509,7 @@ const transcribeWithOpenAiCompatible = async (
   const response = await fetch(endpoint, {
     method: 'POST',
     headers,
-    body: createOpenAiCompatibleFormData(audioFile, descriptor, context, language),
+    body: createOpenAiCompatibleFormData(audioFile, descriptor, modelName, context, language),
     signal,
   });
   const result = await parseResponseBody<OpenAiCompatibleResponse | string>(response);
@@ -765,9 +768,17 @@ export const transcribeWithMainstreamAsr = async (
   signal: AbortSignal,
 ): Promise<TranscriptionResult> => {
   const descriptor = getMainstreamAsrModelDescriptor(config.model);
+  const modelName =
+    descriptor.model === MainstreamAsrModel.CUSTOM_OPENAI_COMPATIBLE
+      ? (config.customModelName || '').trim()
+      : descriptor.modelName;
   const apiKey = config.apiKey.trim();
   if (!apiKey) {
     throw new Error(`${descriptor.label} API Key 未设置。请在设置中配置。`);
+  }
+
+  if (!modelName) {
+    throw new Error(`${descriptor.label} 自定义模型名称未设置。请在设置中配置。`);
   }
 
   if (descriptor.requiresEnglish && language !== Language.AUTO && language !== Language.ENGLISH) {
@@ -793,5 +804,5 @@ export const transcribeWithMainstreamAsr = async (
     return transcribeWithElevenLabs(audioFile, language, descriptor, endpoint, headers, signal);
   }
 
-  return transcribeWithOpenAiCompatible(audioFile, context, language, descriptor, endpoint, headers, signal);
+  return transcribeWithOpenAiCompatible(audioFile, context, language, descriptor, modelName, endpoint, headers, signal);
 };

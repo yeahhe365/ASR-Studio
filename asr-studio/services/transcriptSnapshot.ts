@@ -20,6 +20,7 @@ export type TranscriptSaveSnapshotInput = {
   enableLongAudioChunking?: boolean;
   nvidiaNimTask?: NvidiaNimTask;
   mainstreamAsrModel?: MainstreamAsrModel;
+  mainstreamAsrCustomModelName?: string;
 };
 
 export type TranscriptSaveSnapshotDefaults = Required<
@@ -33,6 +34,7 @@ export type TranscriptSaveSnapshotDefaults = Required<
     | 'enableLongAudioChunking'
     | 'nvidiaNimTask'
     | 'mainstreamAsrModel'
+    | 'mainstreamAsrCustomModelName'
   >
 >;
 
@@ -49,6 +51,8 @@ export const createTranscriptSaveSnapshot = (input: TranscriptSaveSnapshotInput)
     enableLongAudioChunking: input.enableLongAudioChunking ?? null,
     nvidiaNimTask: input.provider === AsrProvider.NVIDIA_NIM ? (input.nvidiaNimTask ?? null) : null,
     mainstreamAsrModel: input.provider === AsrProvider.MAINSTREAM ? (input.mainstreamAsrModel ?? null) : null,
+    mainstreamAsrCustomModelName:
+      input.provider === AsrProvider.MAINSTREAM ? (input.mainstreamAsrCustomModelName ?? null) : null,
   });
 };
 
@@ -74,5 +78,9 @@ export const createRestoredTranscriptSaveSnapshot = (item: HistoryItem, defaults
     mainstreamAsrModel: isMainstreamAsrModel(item.mainstreamAsrModel)
       ? item.mainstreamAsrModel
       : defaults.mainstreamAsrModel,
+    mainstreamAsrCustomModelName:
+      typeof item.mainstreamAsrCustomModelName === 'string'
+        ? item.mainstreamAsrCustomModelName
+        : defaults.mainstreamAsrCustomModelName,
   });
 };

@@ -22,6 +22,41 @@ afterEach(() => {
 });
 
 describe('transcribeWithMainstreamAsr', () => {
+  test('calls custom OpenAI-compatible endpoints with the configured model name', async () => {
+    const calls: FetchCall[] = [];
+    globalThis.fetch = (async (input: RequestInfo | URL, init?: RequestInit) => {
+      calls.push({ input, init });
+      return new Response(JSON.stringify({ text: 'Custom gateway result', language: 'zh' }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }) as typeof fetch;
+
+    const result = await transcribeWithMainstreamAsr(
+      new File(['audio'], 'meeting.wav', { type: 'audio/wav' }),
+      '专有名词：ASR Studio',
+      Language.CHINESE,
+      false,
+      {
+        model: 'custom:openai-compatible' as MainstreamAsrModel,
+        customModelName: ' qwen3-asr-flash ',
+        apiKey: ' gateway-key ',
+        baseUrl: ' https://gateway.example.com/v1/audio/transcriptions/ ',
+      } as Parameters<typeof transcribeWithMainstreamAsr>[4] & { customModelName: string },
+      new AbortController().signal,
+    );
+
+    assert.equal(String(calls[0].input), 'https://gateway.example.com/v1/audio/transcriptions');
+    assert.equal((calls[0].init?.headers as Record<string, string>).Authorization, 'Bearer gateway-key');
+    const body = calls[0].init?.body as FormData;
+    assert.equal(body.get('model'), 'qwen3-asr-flash');
+    assert.equal(body.get('language'), 'zh');
+    assert.equal(body.get('prompt'), '专有名词：ASR Studio');
+    assert.equal(body.get('response_format'), 'verbose_json');
+    assert.equal(result.transcription, 'Custom gateway result');
+    assert.equal(result.detectedLanguage, 'zh');
+  });
+
   test('calls OpenAI-compatible transcription endpoints with model, prompt, and language', async () => {
     const calls: FetchCall[] = [];
     globalThis.fetch = (async (input: RequestInfo | URL, init?: RequestInit) => {
