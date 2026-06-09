@@ -8,6 +8,7 @@ import { AsrProvider, MainstreamAsrModel, NvidiaNimTask, type AsrProviderConfig 
 const createConfig = (patch: Partial<AsrProviderConfig> = {}): AsrProviderConfig => ({
   provider: AsrProvider.QWEN,
   qwenApiKey: 'qwen-key',
+  bailianFunAsrApiKey: 'bailian-key',
   doubaoApiKey: 'doubao-key',
   doubaoAccessKey: '',
   geminiApiKey: 'gemini-key',
@@ -30,6 +31,13 @@ describe('getProviderReadinessError', () => {
       /Qwen API Key/,
     );
     assert.match(
+      getProviderReadinessError(
+        createConfig({ provider: AsrProvider.BAILIAN_FUN_ASR, bailianFunAsrApiKey: '' }),
+        localAudio,
+      ) || '',
+      /百炼 FunASR API Key/,
+    );
+    assert.match(
       getProviderReadinessError(createConfig({ provider: AsrProvider.GEMINI, geminiApiKey: '' }), localAudio) || '',
       /Gemini API Key/,
     );
@@ -44,6 +52,7 @@ describe('getProviderReadinessError', () => {
       getProviderReadinessError(createConfig({ provider: AsrProvider.QWEN }), remoteAudio) || '',
       /不支持远程音频 URL/,
     );
+    assert.equal(getProviderReadinessError(createConfig({ provider: AsrProvider.BAILIAN_FUN_ASR }), remoteAudio), null);
     assert.equal(getProviderReadinessError(createConfig({ provider: AsrProvider.DOUBAO }), remoteAudio), null);
     assert.equal(
       getProviderReadinessError(
@@ -63,6 +72,10 @@ describe('getProviderReadinessError', () => {
 
     const localAudioToConvert = new File(['audio'], 'sample.webm', { type: 'audio/webm' });
     assert.equal(getProviderReadinessError(createConfig({ provider: AsrProvider.DOUBAO }), localAudioToConvert), null);
+  });
+
+  test('allows local audio for Bailian FunASR base64 submission', () => {
+    assert.equal(getProviderReadinessError(createConfig({ provider: AsrProvider.BAILIAN_FUN_ASR }), localAudio), null);
   });
 
   test('rejects local or private Doubao remote audio URLs before submit', () => {

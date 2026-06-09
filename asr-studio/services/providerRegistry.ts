@@ -1,4 +1,5 @@
 import { AsrProvider, type AsrProviderConfig } from '../types';
+import { bailianFunAsrProviderEntry } from './providers/bailianFunAsrRegistry';
 import { doubaoProviderEntry } from './providers/doubaoRegistry';
 import { geminiProviderEntry } from './providers/geminiRegistry';
 import { mainstreamAsrProviderEntry } from './providers/mainstreamAsrRegistry';
@@ -44,6 +45,7 @@ const createReport = (checks: ProviderDiagnosticCheck[]): ProviderDiagnosticRepo
 
 const providerRegistryEntries: ProviderRegistryEntry[] = [
   qwenProviderEntry,
+  bailianFunAsrProviderEntry,
   doubaoProviderEntry,
   geminiProviderEntry,
   nvidiaNimProviderEntry,
@@ -95,6 +97,7 @@ export const asrProviderCapabilityMatrix: ProviderCapabilityMatrixRow[] = [
     description: '浏览器上传或录音后的音频输入。',
     cells: {
       [AsrProvider.QWEN]: { status: 'supported', label: '支持', detail: 'Base64 Data URL 短音频。' },
+      [AsrProvider.BAILIAN_FUN_ASR]: { status: 'supported', label: '支持', detail: 'Base64 Data URL 本地文件。' },
       [AsrProvider.DOUBAO]: { status: 'supported', label: '支持', detail: 'Base64 audio.data 或远程 URL。' },
       [AsrProvider.GEMINI]: { status: 'supported', label: '支持', detail: 'inlineData 音频输入。' },
       [AsrProvider.NVIDIA_NIM]: { status: 'supported', label: '支持', detail: 'HTTP multipart 文件。' },
@@ -107,6 +110,7 @@ export const asrProviderCapabilityMatrix: ProviderCapabilityMatrixRow[] = [
     description: '直接提交服务端可访问的音频链接。',
     cells: {
       [AsrProvider.QWEN]: { status: 'planned', label: '待接入', detail: '官方支持 URL，当前 UI 未开放。' },
+      [AsrProvider.BAILIAN_FUN_ASR]: { status: 'supported', label: '支持', detail: 'file_urls 远程 URL。' },
       [AsrProvider.DOUBAO]: { status: 'supported', label: '支持', detail: '标准版 2.0 audio.url。' },
       [AsrProvider.GEMINI]: { status: 'unsupported', label: '未接', detail: '当前只走本地 inlineData。' },
       [AsrProvider.NVIDIA_NIM]: { status: 'unsupported', label: '未接', detail: '当前只走 multipart 文件。' },
@@ -123,6 +127,7 @@ export const asrProviderCapabilityMatrix: ProviderCapabilityMatrixRow[] = [
     description: '返回可用于字幕和分段视图的结构化片段。',
     cells: {
       [AsrProvider.QWEN]: { status: 'planned', label: '待接入', detail: '长音频任务可扩展 word/utterance 时间戳。' },
+      [AsrProvider.BAILIAN_FUN_ASR]: { status: 'supported', label: '支持', detail: '解析 sentence 时间戳。' },
       [AsrProvider.DOUBAO]: { status: 'supported', label: '支持', detail: '解析 utterances 为 segments。' },
       [AsrProvider.GEMINI]: { status: 'partial', label: '提示词', detail: '可提示模型输出，当前未强制结构化。' },
       [AsrProvider.NVIDIA_NIM]: { status: 'partial', label: '取决代理', detail: '仅透传代理返回的文本。' },
@@ -135,6 +140,7 @@ export const asrProviderCapabilityMatrix: ProviderCapabilityMatrixRow[] = [
     description: '麦克风实时流式识别。',
     cells: {
       [AsrProvider.QWEN]: { status: 'planned', label: '待接入', detail: '官方有 realtime 模型。' },
+      [AsrProvider.BAILIAN_FUN_ASR]: { status: 'unsupported', label: '未接', detail: '当前只接离线文件任务。' },
       [AsrProvider.DOUBAO]: { status: 'supported', label: '支持', detail: '通过同源 WebSocket 代理。' },
       [AsrProvider.GEMINI]: { status: 'planned', label: '待接入', detail: '可后续接 Live API。' },
       [AsrProvider.NVIDIA_NIM]: { status: 'unsupported', label: '未接', detail: '当前没有浏览器实时路径。' },
@@ -147,6 +153,7 @@ export const asrProviderCapabilityMatrix: ProviderCapabilityMatrixRow[] = [
     description: '官方异步文件任务或本地切片后的长音频处理。',
     cells: {
       [AsrProvider.QWEN]: { status: 'planned', label: '待接入', detail: 'filetrans 异步任务未接。' },
+      [AsrProvider.BAILIAN_FUN_ASR]: { status: 'supported', label: '支持', detail: '异步任务提交、轮询和结果下载。' },
       [AsrProvider.DOUBAO]: { status: 'supported', label: '支持', detail: '标准版异步提交与轮询。' },
       [AsrProvider.GEMINI]: { status: 'partial', label: '待增强', detail: '当前靠本地切片，Files API 未接。' },
       [AsrProvider.NVIDIA_NIM]: { status: 'partial', label: '取决服务', detail: '受自托管或代理限制。' },
@@ -163,6 +170,7 @@ export const asrProviderCapabilityMatrix: ProviderCapabilityMatrixRow[] = [
     description: '把非英文语音翻译为英文文本。',
     cells: {
       [AsrProvider.QWEN]: { status: 'unsupported', label: '未接', detail: '当前只做识别。' },
+      [AsrProvider.BAILIAN_FUN_ASR]: { status: 'unsupported', label: '未接', detail: '当前只做识别。' },
       [AsrProvider.DOUBAO]: { status: 'unsupported', label: '未接', detail: '当前只做识别。' },
       [AsrProvider.GEMINI]: { status: 'partial', label: '提示词', detail: '可提示翻译，当前无专用模式。' },
       [AsrProvider.NVIDIA_NIM]: { status: 'supported', label: '支持', detail: '调用 /v1/audio/translations。' },

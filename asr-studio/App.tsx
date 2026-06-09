@@ -7,6 +7,7 @@ import type { HistoryItem, Notification } from './types';
 import { Toast } from './components/Toast';
 import { SettingsPanel } from './components/SettingsPanel';
 import { AudioPreview } from './components/AudioPreview';
+import { BattleModePanel } from './components/BattleModePanel';
 import { BenchmarkPanel } from './components/BenchmarkPanel';
 import { HistoryPanel } from './components/HistoryPanel';
 import { SessionParametersPanel } from './components/SessionParametersPanel';
@@ -15,6 +16,7 @@ import { useAppSettings } from './hooks/useAppSettings';
 import { useAudioDevices } from './hooks/useAudioDevices';
 import { useHistoryItems } from './hooks/useHistoryItems';
 import { usePwaInstall } from './hooks/usePwaInstall';
+import { useBattleTranscription } from './hooks/useBattleTranscription';
 import { useTranscriptionFlow } from './hooks/useTranscriptionFlow';
 import { languageDisplayNames } from './displayNames';
 import { clearCachedRecording, clearTranscriptionCache, getStorageEstimate } from './services/cacheService';
@@ -35,6 +37,9 @@ export default function App() {
     asrProvider,
     autoCopy,
     autoGainControl,
+    battleModeEnabled,
+    battleProviderA,
+    battleProviderB,
     compressionLevel,
     context,
     echoCancellation,
@@ -48,6 +53,8 @@ export default function App() {
   } = values;
   const {
     setAsrProvider,
+    setBattleProviderA,
+    setBattleProviderB,
     setCompressionLevel,
     setContext,
     setEnableItn,
@@ -146,9 +153,34 @@ export default function App() {
     updateHistoryItem,
     audioInputPanelRef,
   });
-  const isTranscriptionBusy = isLoading || isBatchProcessing;
+  const {
+    sides: battleSides,
+    isRunning: isBattleRunning,
+    providerError: battleProviderError,
+    realtimeElapsedTime: battleRealtimeElapsedTime,
+    startBattle,
+    cancelBattle,
+  } = useBattleTranscription({
+    providerA: battleProviderA,
+    providerB: battleProviderB,
+    baseConfig: asrConfig,
+    context,
+    language,
+    enableItn,
+    compressionLevel,
+    trimSilence,
+    enableLongAudioChunking,
+    notify,
+    clearNotification,
+  });
+  const isTranscriptionBusy = isLoading || isBatchProcessing || isBattleRunning;
   const isRecordingActive = isRecording || isRecordingBusy;
   const isWorkspaceBusy = isTranscriptionBusy || isRecordingActive || isBenchmarkRunning;
+  const isBattleModeActive = battleModeEnabled && activeWorkspace === 'studio';
+  const remoteCapableProviders = [AsrProvider.BAILIAN_FUN_ASR, AsrProvider.DOUBAO, AsrProvider.MAINSTREAM];
+  const allowRemoteUrl = isBattleModeActive
+    ? remoteCapableProviders.includes(battleProviderA) && remoteCapableProviders.includes(battleProviderB)
+    : remoteCapableProviders.includes(asrProvider);
 
   useEffect(() => {
     const root = window.document.documentElement;
@@ -200,6 +232,11 @@ export default function App() {
       event.preventDefault();
       isSpaceDown.current = false;
 
+      if (isBattleModeActive) {
+        audioInputPanelRef.current?.stopRecording();
+        return;
+      }
+
       handleKeyboardRecordingRelease();
     };
 
@@ -210,7 +247,46 @@ export default function App() {
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('keyup', handleKeyUp);
     };
-  }, [activeWorkspace, handleKeyboardRecordingRelease, isRecordingActive, isSettingsOpen, isTranscriptionBusy]);
+  }, [
+    activeWorkspace,
+    handleKeyboardRecordingRelease,
+    isBattleModeActive,
+    isRecordingActive,
+    isSettingsOpen,
+    isTranscriptionBusy,
+  ]);
+
+  const handlePrimaryTranscribe = useCallback(() => {
+    if (isBattleModeActive) {
+      if (isRecording) {
+        audioInputPanelRef.current?.stopRecording();
+        return;
+      }
+
+      void startBattle(audioFile);
+      return;
+    }
+
+    void handleTranscribe();
+  }, [audioFile, handleTranscribe, isBattleModeActive, isRecording, startBattle]);
+
+  const handlePrimaryCancel = useCallback(() => {
+    if (isBattleRunning) {
+      cancelBattle();
+      return;
+    }
+
+    handleCancel();
+  }, [cancelBattle, handleCancel, isBattleRunning]);
+
+  const handlePrimaryRetry = useCallback(() => {
+    if (isBattleModeActive) {
+      void startBattle(audioFile);
+      return;
+    }
+
+    handleRetry();
+  }, [audioFile, handleRetry, isBattleModeActive, startBattle]);
 
   const handleClearHistory = useCallback(async () => {
     const cleared = await removeAllHistory();
@@ -323,6 +399,21 @@ export default function App() {
   }, [notify, resetSettings]);
 
   const hasResult = Boolean(transcription || detectedLanguage);
+  const studioStateLabel = isBattleRunning
+    ? 'Battle 中'
+    : isBatchProcessing
+      ? '批处理中'
+      : isLoading
+        ? '识别中'
+        : isRecording
+          ? '录音中'
+          : isRecordingBusy
+            ? '录音处理中'
+            : isBattleModeActive
+              ? 'Battle'
+              : hasResult
+                ? '已生成'
+                : '待处理';
   const hasActiveHistoryItem = activeHistoryItemId !== null && history.some((item) => item.id === activeHistoryItemId);
   const transcriptSaveState = getTranscriptSaveState({
     hasTranscription: Boolean(transcription),
@@ -375,7 +466,7 @@ export default function App() {
               echoCancellation={echoCancellation}
               noiseSuppression={noiseSuppression}
               autoGainControl={autoGainControl}
-              allowRemoteUrl={asrProvider === AsrProvider.DOUBAO || asrProvider === AsrProvider.MAINSTREAM}
+              allowRemoteUrl={allowRemoteUrl}
             />
             <AudioPreview file={audioFile} onFileChange={changeAudioFile} disabled={isWorkspaceBusy} />
             <SessionParametersPanel
@@ -401,19 +492,7 @@ export default function App() {
               </div>
               <div className="surface-panel min-w-0 px-3 py-2">
                 <p className="eyebrow">State</p>
-                <p className="mt-1 text-sm font-semibold text-content-100">
-                  {isBatchProcessing
-                    ? '批处理中'
-                    : isLoading
-                      ? '识别中'
-                      : isRecording
-                        ? '录音中'
-                        : isRecordingBusy
-                          ? '录音处理中'
-                          : hasResult
-                            ? '已生成'
-                            : '待处理'}
-                </p>
+                <p className="mt-1 text-sm font-semibold text-content-100">{studioStateLabel}</p>
               </div>
               <div className="surface-panel min-w-0 px-3 py-2">
                 <p className="eyebrow">Language</p>
@@ -427,38 +506,56 @@ export default function App() {
               </div>
             </div>
 
-            <ResultDisplay
-              transcription={transcription}
-              detectedLanguage={detectedLanguage}
-              isLoading={isLoading}
-              loadingStatus={loadingMessage}
-              elapsedTime={elapsedTime}
-              segments={segments}
-              sourceFileName={audioFile?.name}
-              provider={asrProvider}
-              saveState={transcriptSaveState}
-              disabled={isWorkspaceBusy}
-              onTranscriptionChange={handleTranscriptionChange}
-              onSaveTranscription={handleSaveCurrentTranscription}
-            />
+            {isBattleModeActive ? (
+              <BattleModePanel
+                sides={battleSides}
+                providerA={battleProviderA}
+                providerB={battleProviderB}
+                providerError={battleProviderError}
+                isRunning={isBattleRunning}
+                disabled={isWorkspaceBusy}
+                sourceFileName={audioFile?.name}
+                onProviderAChange={setBattleProviderA}
+                onProviderBChange={setBattleProviderB}
+              />
+            ) : (
+              <ResultDisplay
+                transcription={transcription}
+                detectedLanguage={detectedLanguage}
+                isLoading={isLoading}
+                loadingStatus={loadingMessage}
+                elapsedTime={elapsedTime}
+                segments={segments}
+                sourceFileName={audioFile?.name}
+                provider={asrProvider}
+                saveState={transcriptSaveState}
+                disabled={isWorkspaceBusy}
+                onTranscriptionChange={handleTranscriptionChange}
+                onSaveTranscription={handleSaveCurrentTranscription}
+              />
+            )}
 
             <TranscriptionActions
               audioFile={audioFile}
               copied={copied}
-              isLoading={isLoading}
+              isLoading={isBattleModeActive ? isBattleRunning : isLoading}
               isRecording={isRecording}
               isRecordingBusy={isRecordingBusy}
               queue={queue}
               isBatchProcessing={isBatchProcessing}
-              realtimeElapsedTime={realtimeElapsedTime}
-              transcription={transcription}
-              onCancel={handleCancel}
+              disableBatch={isBattleModeActive}
+              primaryActionLabel={isBattleModeActive ? '开始 Battle' : '开始识别'}
+              loadingActionLabel={isBattleModeActive ? 'Battle 中' : '正在识别'}
+              recordingActionLabel={isBattleModeActive ? '停止录音' : '停止并识别'}
+              realtimeElapsedTime={isBattleModeActive ? battleRealtimeElapsedTime : realtimeElapsedTime}
+              transcription={isBattleModeActive ? '' : transcription}
+              onCancel={handlePrimaryCancel}
               onCopy={handleCopy}
               onStartBatch={handleBatchTranscribe}
               onClearQueue={clearQueue}
               onRemoveQueueItem={removeQueueItem}
-              onRetry={handleRetry}
-              onTranscribe={handleTranscribe}
+              onRetry={handlePrimaryRetry}
+              onTranscribe={handlePrimaryTranscribe}
             />
 
             <HistoryPanel

@@ -18,6 +18,10 @@ interface TranscriptionActionsProps {
   queue: TranscriptionQueueItem[];
   isBatchProcessing: boolean;
   disabled?: boolean;
+  disableBatch?: boolean;
+  primaryActionLabel?: string;
+  loadingActionLabel?: string;
+  recordingActionLabel?: string;
   realtimeElapsedTime: number;
   transcription: string;
   onCancel: () => void;
@@ -54,6 +58,10 @@ export const TranscriptionActions: React.FC<TranscriptionActionsProps> = ({
   queue,
   isBatchProcessing,
   disabled = false,
+  disableBatch = false,
+  primaryActionLabel = '开始识别',
+  loadingActionLabel = '正在识别',
+  recordingActionLabel = '停止并识别',
   realtimeElapsedTime,
   transcription,
   onCancel,
@@ -69,7 +77,7 @@ export const TranscriptionActions: React.FC<TranscriptionActionsProps> = ({
   const canTranscribe =
     !disabled && !isRecordingBusy && Boolean(audioFile || isRecording) && !isLoading && !isBatchProcessing;
   const canRetry = !secondaryActionsDisabled && !isBatchProcessing;
-  const canStartBatch = !secondaryActionsDisabled && !isBatchProcessing && pendingCount > 0;
+  const canStartBatch = !disableBatch && !secondaryActionsDisabled && !isBatchProcessing && pendingCount > 0;
   const canClearQueue = !secondaryActionsDisabled;
 
   const handleTranscribeClick = () => {
@@ -108,7 +116,7 @@ export const TranscriptionActions: React.FC<TranscriptionActionsProps> = ({
           {isLoading ? (
             <>
               <LoaderIcon className="mr-2 h-5 w-5" />
-              <span className="truncate">正在识别</span>
+              <span className="truncate">{loadingActionLabel}</span>
               <span className="ml-2 w-[56px] flex-shrink-0 text-left font-mono tabular-nums">
                 {realtimeElapsedTime.toFixed(1)}s
               </span>
@@ -116,7 +124,7 @@ export const TranscriptionActions: React.FC<TranscriptionActionsProps> = ({
           ) : isRecording ? (
             <>
               <StopIcon className="mr-2 h-5 w-5" />
-              <span className="truncate">停止并识别</span>
+              <span className="truncate">{recordingActionLabel}</span>
             </>
           ) : isRecordingBusy ? (
             <>
@@ -126,7 +134,7 @@ export const TranscriptionActions: React.FC<TranscriptionActionsProps> = ({
           ) : (
             <>
               <SoundWaveIcon className="mr-2 h-5 w-5" />
-              <span className="truncate">开始识别</span>
+              <span className="truncate">{primaryActionLabel}</span>
             </>
           )}
         </button>

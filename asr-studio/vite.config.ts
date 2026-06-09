@@ -92,6 +92,14 @@ export default defineConfig({
   server: {
     host: '0.0.0.0',
     port: 5173,
+    proxy: {
+      '/dashscope': {
+        target: 'https://dashscope.aliyuncs.com',
+        changeOrigin: true,
+        secure: true,
+        rewrite: (requestPath) => requestPath.replace(/^\/dashscope/, ''),
+      },
+    },
   },
   resolve: {
     alias: {

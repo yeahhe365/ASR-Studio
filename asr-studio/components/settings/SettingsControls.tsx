@@ -65,11 +65,14 @@ export const SettingRow: React.FC<{
   children: React.ReactNode;
   className?: string;
   labelClassName?: string;
-}> = ({ label, description, icon, children, className, labelClassName }) => (
+  layout?: 'inline' | 'stacked';
+}> = ({ label, description, icon, children, className, labelClassName, layout = 'inline' }) => (
   <div
-    className={`flex flex-col gap-3 rounded-md px-2 py-3 transition-colors hover:bg-[var(--theme-bg-tertiary)]/25 sm:flex-row sm:items-center sm:justify-between ${className || ''}`}
+    className={`flex flex-col gap-3 rounded-md px-2 py-3 transition-colors hover:bg-[var(--theme-bg-tertiary)]/25 ${
+      layout === 'stacked' ? 'sm:flex-col sm:items-stretch sm:justify-start' : 'sm:flex-row sm:items-center sm:justify-between'
+    } ${className || ''}`}
   >
-    <div className="flex min-w-0 items-start gap-3 pr-4">
+    <div className={`flex min-w-0 items-start gap-3 ${layout === 'stacked' ? 'pr-0' : 'pr-4'}`}>
       {icon && (
         <div className={`mt-0.5 flex-shrink-0 ${labelClassName ? 'opacity-90' : 'text-[var(--theme-text-tertiary)]'}`}>
           {icon}
@@ -86,7 +89,15 @@ export const SettingRow: React.FC<{
         )}
       </div>
     </div>
-    <div className="flex w-full flex-shrink-0 items-center gap-2 sm:ml-4 sm:w-auto sm:justify-end">{children}</div>
+    <div
+      className={
+        layout === 'stacked'
+          ? 'flex w-full min-w-0 items-center gap-2 sm:ml-0 sm:w-full sm:justify-start'
+          : 'flex w-full flex-shrink-0 items-center gap-2 sm:ml-4 sm:w-auto sm:justify-end'
+      }
+    >
+      {children}
+    </div>
   </div>
 );
 
@@ -96,17 +107,19 @@ export const SegmentedControl = <T extends string>({
   value,
   onChange,
   disabled,
+  className,
 }: {
   ariaLabel: string;
   options: Array<{ value: T; label: string }>;
   value: T;
   onChange: (value: T) => void;
   disabled?: boolean;
+  className?: string;
 }) => (
   <div
     role="group"
     aria-label={ariaLabel}
-    className="grid w-full grid-cols-[repeat(var(--segments),minmax(0,1fr))] gap-1 rounded-md border border-[var(--theme-border-secondary)] bg-[var(--theme-bg-tertiary)]/35 p-1 shadow-sm sm:w-auto"
+    className={`grid w-full grid-cols-[repeat(var(--segments),minmax(0,1fr))] gap-1 rounded-md border border-[var(--theme-border-secondary)] bg-[var(--theme-bg-tertiary)]/35 p-1 shadow-sm sm:w-auto ${className || ''}`}
     style={{ '--segments': options.length } as React.CSSProperties}
   >
     {options.map((option) => {
@@ -123,7 +136,7 @@ export const SegmentedControl = <T extends string>({
           }}
           disabled={disabled}
           aria-pressed={isActive}
-          className={`rounded-md px-3 py-1.5 text-sm font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[var(--theme-border-focus)] focus:ring-offset-2 focus:ring-offset-[var(--theme-bg-secondary)] disabled:cursor-not-allowed disabled:opacity-50 ${
+          className={`whitespace-nowrap rounded-md px-3 py-1.5 text-sm font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[var(--theme-border-focus)] focus:ring-offset-2 focus:ring-offset-[var(--theme-bg-secondary)] disabled:cursor-not-allowed disabled:opacity-50 ${
             isActive
               ? 'bg-[var(--theme-bg-input)] text-[var(--theme-text-primary)] shadow-sm ring-1 ring-black/5 dark:ring-white/10'
               : 'text-[var(--theme-text-tertiary)] hover:bg-[var(--theme-bg-tertiary)]/60 hover:text-[var(--theme-text-primary)]'

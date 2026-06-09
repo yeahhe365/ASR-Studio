@@ -6,6 +6,7 @@ import type { BenchmarkModelTarget } from './benchmarkTypes';
 
 const baseProviderCostPerMinuteUsd: Partial<Record<AsrProvider, number>> = {
   [AsrProvider.QWEN]: 0,
+  [AsrProvider.BAILIAN_FUN_ASR]: 0,
   [AsrProvider.DOUBAO]: 0,
   [AsrProvider.GEMINI]: 0,
   [AsrProvider.NVIDIA_NIM]: 0,
@@ -34,6 +35,7 @@ const createBaseProviderTarget = (provider: Exclude<AsrProvider, AsrProvider.MAI
 export const getBenchmarkModelTargets = (): BenchmarkModelTarget[] => {
   const baseTargets = [
     createBaseProviderTarget(AsrProvider.QWEN),
+    createBaseProviderTarget(AsrProvider.BAILIAN_FUN_ASR),
     createBaseProviderTarget(AsrProvider.DOUBAO),
     createBaseProviderTarget(AsrProvider.GEMINI),
     createBaseProviderTarget(AsrProvider.NVIDIA_NIM),

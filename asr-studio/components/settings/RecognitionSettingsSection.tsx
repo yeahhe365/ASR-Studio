@@ -1,7 +1,9 @@
 import React from 'react';
 import { compressionLevelDisplayNames, languageDisplayNames } from '../../displayNames';
-import { CompressionLevel, Language } from '../../types';
+import { CompressionLevel, Language, AsrProvider } from '../../types';
+import { asrProviderSegmentOptions } from '../../services/providerRegistry';
 import { LanguageIcon } from '../icons/LanguageIcon';
+import { ServerIcon } from '../icons/ServerIcon';
 import { SoundWaveIcon } from '../icons/SoundWaveIcon';
 import { inputClassName, SectionBlock, SegmentedControl, SettingRow, ToggleSwitch } from './SettingsControls';
 import type { SettingsPanelProps } from './settingsTypes';
@@ -16,6 +18,9 @@ export const RecognitionSettingsSection: React.FC<RecognitionSettingsSectionProp
 }) => {
   const {
     autoGainControl,
+    battleModeEnabled,
+    battleProviderA,
+    battleProviderB,
     compressionLevel,
     context,
     echoCancellation,
@@ -28,6 +33,9 @@ export const RecognitionSettingsSection: React.FC<RecognitionSettingsSectionProp
   } = values;
   const {
     setAutoGainControl,
+    setBattleModeEnabled,
+    setBattleProviderA,
+    setBattleProviderB,
     setCompressionLevel,
     setContext,
     setEchoCancellation,
@@ -41,6 +49,42 @@ export const RecognitionSettingsSection: React.FC<RecognitionSettingsSectionProp
 
   return (
     <div className="space-y-6">
+      <SectionBlock title="Battle" icon={<ServerIcon className="h-3.5 w-3.5" />}>
+        <SettingRow label="Battle 模式" description="用同一段音频并排比较两个模型的转写结果。">
+          <ToggleSwitch id="battle-mode-setting" enabled={battleModeEnabled} onChange={setBattleModeEnabled} disabled={disabled} />
+        </SettingRow>
+        <SettingRow label="Model A" description="Battle 左侧模型。">
+          <select
+            id="battle-provider-a-setting"
+            value={battleProviderA}
+            onChange={(event) => setBattleProviderA(event.target.value as AsrProvider)}
+            disabled={disabled}
+            className={`${inputClassName} sm:w-56`}
+          >
+            {asrProviderSegmentOptions.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </SettingRow>
+        <SettingRow label="Model B" description="Battle 右侧模型。">
+          <select
+            id="battle-provider-b-setting"
+            value={battleProviderB}
+            onChange={(event) => setBattleProviderB(event.target.value as AsrProvider)}
+            disabled={disabled}
+            className={`${inputClassName} sm:w-56`}
+          >
+            {asrProviderSegmentOptions.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </SettingRow>
+      </SectionBlock>
+
       <SectionBlock title="语言与文本" icon={<LanguageIcon className="h-3.5 w-3.5" />}>
         <SettingRow label="语言" description="指定识别语言，或保持自动识别。">
           <select

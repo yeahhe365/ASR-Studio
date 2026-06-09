@@ -1,4 +1,4 @@
-import { DOUBAO_ASR_RESOURCE_ID, NVIDIA_NIM_ASR_MODEL } from '../constants';
+import { BAILIAN_FUN_ASR_MODEL, DOUBAO_ASR_RESOURCE_ID, NVIDIA_NIM_ASR_MODEL } from '../constants';
 import {
   AsrProvider,
   MainstreamAsrModel,
@@ -49,6 +49,13 @@ export const createTranscriptionCacheSource = (fileHash: string, audioSourceUrl?
 };
 
 export const createProviderCacheDescriptor = (config: AsrProviderConfig) => {
+  if (config.provider === AsrProvider.BAILIAN_FUN_ASR) {
+    return {
+      provider: config.provider,
+      model: BAILIAN_FUN_ASR_MODEL,
+    };
+  }
+
   if (config.provider === AsrProvider.DOUBAO) {
     return {
       provider: config.provider,

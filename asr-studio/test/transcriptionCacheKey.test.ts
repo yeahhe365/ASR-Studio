@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { describe, test } from 'node:test';
 
-import { DOUBAO_ASR_RESOURCE_ID, NVIDIA_NIM_ASR_MODEL } from '../constants.ts';
+import { BAILIAN_FUN_ASR_MODEL, DOUBAO_ASR_RESOURCE_ID, NVIDIA_NIM_ASR_MODEL } from '../constants.ts';
 import {
   createProviderCacheDescriptor,
   createTranscriptionCacheKey,
@@ -19,6 +19,7 @@ import {
 const createConfig = (overrides: Partial<AsrProviderConfig> = {}): AsrProviderConfig => ({
   provider: AsrProvider.QWEN,
   qwenApiKey: 'qwen-key',
+  bailianFunAsrApiKey: '',
   doubaoApiKey: '',
   doubaoAccessKey: '',
   geminiApiKey: '',
@@ -60,6 +61,10 @@ describe('transcription cache keys', () => {
     assert.deepEqual(createProviderCacheDescriptor(createConfig({ provider: AsrProvider.DOUBAO })), {
       provider: AsrProvider.DOUBAO,
       resourceId: DOUBAO_ASR_RESOURCE_ID,
+    });
+    assert.deepEqual(createProviderCacheDescriptor(createConfig({ provider: AsrProvider.BAILIAN_FUN_ASR })), {
+      provider: AsrProvider.BAILIAN_FUN_ASR,
+      model: BAILIAN_FUN_ASR_MODEL,
     });
     assert.deepEqual(
       createProviderCacheDescriptor(

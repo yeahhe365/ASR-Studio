@@ -24,6 +24,7 @@ class MockFileReader {
 const qwenConfig: AsrProviderConfig = {
   provider: AsrProvider.QWEN,
   qwenApiKey: 'qwen-key',
+  bailianFunAsrApiKey: '',
   doubaoApiKey: '',
   doubaoAccessKey: '',
   geminiApiKey: '',
@@ -42,6 +43,43 @@ afterEach(() => {
 });
 
 describe('transcribeAudio', () => {
+  test('does not retry deterministic no-speech provider failures', async () => {
+    const progressMessages: string[] = [];
+    let fetchCalls = 0;
+
+    console.warn = () => {};
+    globalThis.FileReader = MockFileReader as unknown as typeof FileReader;
+    globalThis.fetch = (async (input: RequestInfo | URL) => {
+      assert.equal(String(input), QWEN_ASR_API_URL);
+      fetchCalls += 1;
+      return new Response(
+        JSON.stringify({ error: { message: 'ASR_RESPONSE_HAVE_NO_WORDS: ASR_RESPONSE_HAVE_NO_WORDS' } }),
+        {
+          status: 400,
+          headers: { 'Content-Type': 'application/json' },
+        },
+      );
+    }) as typeof fetch;
+
+    await assert.rejects(
+      () =>
+        transcribeAudio(
+          new File(['audio'], 'meeting.webm', { type: 'audio/webm' }),
+          '',
+          Language.AUTO,
+          false,
+          qwenConfig,
+          (message) => progressMessages.push(message),
+          new AbortController().signal,
+        ),
+      /没有检测到可识别语音/,
+    );
+
+    assert.equal(fetchCalls, 1);
+    assert(progressMessages.includes('音频中没有检测到可识别语音，请检查麦克风、音量或重新录制。'));
+    assert(!progressMessages.some((message) => message.includes('秒后重试')));
+  });
+
   test('aborts immediately during retry backoff', async () => {
     const controller = new AbortController();
     const progressMessages: string[] = [];

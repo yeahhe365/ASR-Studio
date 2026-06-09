@@ -24,7 +24,11 @@ export type AppSettingsValues = {
   noiseSuppression: boolean;
   autoGainControl: boolean;
   asrProvider: AsrProvider;
+  battleModeEnabled: boolean;
+  battleProviderA: AsrProvider;
+  battleProviderB: AsrProvider;
   qwenApiKey: string;
+  bailianFunAsrApiKey: string;
   doubaoApiKey: string;
   doubaoAccessKey: string;
   geminiApiKey: string;
@@ -51,7 +55,11 @@ export type AppSettingsSetters = {
   setNoiseSuppression: Dispatch<SetStateAction<boolean>>;
   setAutoGainControl: Dispatch<SetStateAction<boolean>>;
   setAsrProvider: Dispatch<SetStateAction<AsrProvider>>;
+  setBattleModeEnabled: Dispatch<SetStateAction<boolean>>;
+  setBattleProviderA: Dispatch<SetStateAction<AsrProvider>>;
+  setBattleProviderB: Dispatch<SetStateAction<AsrProvider>>;
   setQwenApiKey: Dispatch<SetStateAction<string>>;
+  setBailianFunAsrApiKey: Dispatch<SetStateAction<string>>;
   setDoubaoApiKey: Dispatch<SetStateAction<string>>;
   setDoubaoAccessKey: Dispatch<SetStateAction<string>>;
   setGeminiApiKey: Dispatch<SetStateAction<string>>;
@@ -78,7 +86,11 @@ const DEFAULT_SETTINGS: AppSettingsValues = {
   noiseSuppression: false,
   autoGainControl: false,
   asrProvider: AsrProvider.QWEN,
+  battleModeEnabled: false,
+  battleProviderA: AsrProvider.QWEN,
+  battleProviderB: AsrProvider.BAILIAN_FUN_ASR,
   qwenApiKey: '',
+  bailianFunAsrApiKey: '',
   doubaoApiKey: '',
   doubaoAccessKey: '',
   geminiApiKey: '',
@@ -161,7 +173,33 @@ export function useAppSettings() {
   const [asrProvider, setAsrProvider] = usePersistentState('asrProvider', DEFAULT_SETTINGS.asrProvider, {
     parse: parseAsrProvider,
   });
+  const [battleModeEnabled, setBattleModeEnabled] = usePersistentState(
+    'battleModeEnabled',
+    DEFAULT_SETTINGS.battleModeEnabled,
+    {
+      parse: parsePersistedBooleanDefaultFalse,
+      serialize: String,
+    },
+  );
+  const [battleProviderA, setBattleProviderA] = usePersistentState(
+    'battleProviderA',
+    DEFAULT_SETTINGS.battleProviderA,
+    {
+      parse: parseAsrProvider,
+    },
+  );
+  const [battleProviderB, setBattleProviderB] = usePersistentState(
+    'battleProviderB',
+    DEFAULT_SETTINGS.battleProviderB,
+    {
+      parse: parseAsrProvider,
+    },
+  );
   const [qwenApiKey, setQwenApiKey] = usePersistentState('qwenApiKey', DEFAULT_SETTINGS.qwenApiKey);
+  const [bailianFunAsrApiKey, setBailianFunAsrApiKey] = usePersistentState(
+    'bailianFunAsrApiKey',
+    DEFAULT_SETTINGS.bailianFunAsrApiKey,
+  );
   const [doubaoApiKey, setDoubaoApiKey] = usePersistentState('doubaoApiKey', DEFAULT_SETTINGS.doubaoApiKey);
   const [doubaoAccessKey, setDoubaoAccessKey] = usePersistentState('doubaoAccessKey', DEFAULT_SETTINGS.doubaoAccessKey);
   const [geminiApiKey, setGeminiApiKey] = usePersistentState('geminiApiKey', DEFAULT_SETTINGS.geminiApiKey);
@@ -197,6 +235,7 @@ export function useAppSettings() {
     () => ({
       provider: asrProvider,
       qwenApiKey,
+      bailianFunAsrApiKey,
       doubaoApiKey,
       doubaoAccessKey,
       geminiApiKey,
@@ -210,6 +249,7 @@ export function useAppSettings() {
     }),
     [
       asrProvider,
+      bailianFunAsrApiKey,
       doubaoAccessKey,
       doubaoApiKey,
       geminiApiKey,
@@ -238,7 +278,11 @@ export function useAppSettings() {
     setNoiseSuppression(DEFAULT_SETTINGS.noiseSuppression);
     setAutoGainControl(DEFAULT_SETTINGS.autoGainControl);
     setAsrProvider(DEFAULT_SETTINGS.asrProvider);
+    setBattleModeEnabled(DEFAULT_SETTINGS.battleModeEnabled);
+    setBattleProviderA(DEFAULT_SETTINGS.battleProviderA);
+    setBattleProviderB(DEFAULT_SETTINGS.battleProviderB);
     setQwenApiKey(DEFAULT_SETTINGS.qwenApiKey);
+    setBailianFunAsrApiKey(DEFAULT_SETTINGS.bailianFunAsrApiKey);
     setDoubaoApiKey(DEFAULT_SETTINGS.doubaoApiKey);
     setDoubaoAccessKey(DEFAULT_SETTINGS.doubaoAccessKey);
     setGeminiApiKey(DEFAULT_SETTINGS.geminiApiKey);
@@ -252,6 +296,10 @@ export function useAppSettings() {
   }, [
     setAsrProvider,
     setAutoCopy,
+    setBailianFunAsrApiKey,
+    setBattleModeEnabled,
+    setBattleProviderA,
+    setBattleProviderB,
     setCompressionLevel,
     setContext,
     setDoubaoAccessKey,
@@ -281,6 +329,10 @@ export function useAppSettings() {
       asrProvider,
       autoCopy,
       autoGainControl,
+      battleModeEnabled,
+      battleProviderA,
+      battleProviderB,
+      bailianFunAsrApiKey,
       compressionLevel,
       context,
       doubaoAccessKey,
@@ -307,6 +359,10 @@ export function useAppSettings() {
       asrProvider,
       autoCopy,
       autoGainControl,
+      battleModeEnabled,
+      battleProviderA,
+      battleProviderB,
+      bailianFunAsrApiKey,
       compressionLevel,
       context,
       doubaoAccessKey,
@@ -336,6 +392,10 @@ export function useAppSettings() {
       setAsrProvider,
       setAutoCopy,
       setAutoGainControl,
+      setBattleModeEnabled,
+      setBattleProviderA,
+      setBattleProviderB,
+      setBailianFunAsrApiKey,
       setCompressionLevel,
       setContext,
       setDoubaoAccessKey,
@@ -362,6 +422,10 @@ export function useAppSettings() {
       setAsrProvider,
       setAutoCopy,
       setAutoGainControl,
+      setBattleModeEnabled,
+      setBattleProviderA,
+      setBattleProviderB,
+      setBailianFunAsrApiKey,
       setCompressionLevel,
       setContext,
       setDoubaoAccessKey,

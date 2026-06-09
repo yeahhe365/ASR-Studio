@@ -3,8 +3,22 @@ import { transcribeWithConfiguredProvider } from './providerRegistry';
 
 const MAX_RETRIES = 3;
 const INITIAL_BACKOFF_MS = 2000;
+const NO_SPEECH_ERROR_MESSAGE = '音频中没有检测到可识别语音，请检查麦克风、音量或重新录制。';
 
 const createAbortError = () => new DOMException('Aborted', 'AbortError');
+
+const getErrorMessage = (error: unknown) => {
+  return error instanceof Error ? error.message : String(error || '转录过程中发生未知错误。');
+};
+
+const getNonRetryableErrorMessage = (error: unknown) => {
+  const message = getErrorMessage(error);
+  if (/ASR_RESPONSE_HAVE_NO_WORDS/i.test(message)) {
+    return NO_SPEECH_ERROR_MESSAGE;
+  }
+
+  return null;
+};
 
 const waitForRetryDelay = (delay: number, signal: AbortSignal) => {
   if (signal.aborted) {
@@ -49,6 +63,12 @@ export const transcribeAudio = async (
       if (error instanceof Error && error.name === 'AbortError') {
         onProgress('识别已取消。');
         throw error;
+      }
+
+      const nonRetryableMessage = getNonRetryableErrorMessage(error);
+      if (nonRetryableMessage) {
+        onProgress(nonRetryableMessage);
+        throw new Error(nonRetryableMessage);
       }
 
       if (i === MAX_RETRIES - 1) {

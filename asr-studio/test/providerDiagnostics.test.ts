@@ -7,6 +7,7 @@ import { AsrProvider, MainstreamAsrModel, NvidiaNimTask, type AsrProviderConfig 
 const baseConfig: AsrProviderConfig = {
   provider: AsrProvider.NVIDIA_NIM,
   qwenApiKey: '',
+  bailianFunAsrApiKey: '',
   doubaoApiKey: '',
   doubaoAccessKey: '',
   geminiApiKey: '',

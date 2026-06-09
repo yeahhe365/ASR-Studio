@@ -130,6 +130,7 @@ const ProviderDetails: React.FC<{
 const createProviderConfig = ({
   asrProvider,
   qwenApiKey,
+  bailianFunAsrApiKey,
   doubaoApiKey,
   doubaoAccessKey,
   geminiApiKey,
@@ -143,6 +144,7 @@ const createProviderConfig = ({
 }: ApiSettingsSectionProps['values']) => ({
   provider: asrProvider,
   qwenApiKey,
+  bailianFunAsrApiKey,
   doubaoApiKey,
   doubaoAccessKey,
   geminiApiKey,
@@ -161,6 +163,7 @@ export const ApiSettingsSection: React.FC<ApiSettingsSectionProps> = ({ values, 
   const {
     setAsrProvider,
     setQwenApiKey,
+    setBailianFunAsrApiKey,
     setDoubaoApiKey,
     setDoubaoAccessKey,
     setGeminiApiKey,
@@ -181,6 +184,7 @@ export const ApiSettingsSection: React.FC<ApiSettingsSectionProps> = ({ values, 
 
     const clearCredentials: Record<AsrProvider, () => void> = {
       [AsrProvider.QWEN]: () => setQwenApiKey(''),
+      [AsrProvider.BAILIAN_FUN_ASR]: () => setBailianFunAsrApiKey(''),
       [AsrProvider.DOUBAO]: () => {
         setDoubaoApiKey('');
         setDoubaoAccessKey('');
@@ -203,14 +207,17 @@ export const ApiSettingsSection: React.FC<ApiSettingsSectionProps> = ({ values, 
   return (
     <div className="space-y-6">
       <SectionBlock title="服务模式" icon={<ServerIcon className="h-3.5 w-3.5" />}>
-        <SettingRow label="API 提供商" description="选择当前用于语音识别的模型服务。">
-          <SegmentedControl
-            ariaLabel="API 提供商"
-            value={asrProvider}
-            onChange={setAsrProvider}
-            disabled={disabled}
-            options={asrProviderSegmentOptions}
-          />
+        <SettingRow label="API 提供商" description="选择当前用于语音识别的模型服务。" layout="stacked">
+          <div className="custom-scrollbar w-full overflow-x-auto pb-1">
+            <SegmentedControl
+              ariaLabel="API 提供商"
+              value={asrProvider}
+              onChange={setAsrProvider}
+              disabled={disabled}
+              options={asrProviderSegmentOptions}
+              className="min-w-max"
+            />
+          </div>
         </SettingRow>
       </SectionBlock>
 

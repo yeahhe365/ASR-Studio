@@ -66,6 +66,7 @@ export const ProviderCredentialsSection: React.FC<ProviderCredentialsSectionProp
   const {
     asrProvider,
     qwenApiKey,
+    bailianFunAsrApiKey,
     doubaoApiKey,
     doubaoAccessKey,
     geminiApiKey,
@@ -79,6 +80,7 @@ export const ProviderCredentialsSection: React.FC<ProviderCredentialsSectionProp
   } = values;
   const {
     setQwenApiKey,
+    setBailianFunAsrApiKey,
     setDoubaoApiKey,
     setDoubaoAccessKey,
     setGeminiApiKey,
@@ -104,6 +106,25 @@ export const ProviderCredentialsSection: React.FC<ProviderCredentialsSectionProp
             disabled={disabled}
             placeholder="sk-xxxxxxxxxxxxxxxx"
             helpText="用于调用 Qwen 官方 OpenAI 兼容接口。"
+          />
+        </div>
+      </SectionBlock>
+    );
+  }
+
+  if (asrProvider === AsrProvider.BAILIAN_FUN_ASR) {
+    return (
+      <SectionBlock title="凭据" icon={<ApiKeyIcon className="h-3.5 w-3.5" />}>
+        <div className="py-3">
+          <CredentialInput
+            id="bailian-fun-asr-api-key-setting"
+            label="API Key"
+            type="password"
+            value={bailianFunAsrApiKey}
+            onChange={setBailianFunAsrApiKey}
+            disabled={disabled}
+            placeholder="sk-xxxxxxxxxxxxxxxx"
+            helpText="用于调用阿里百炼 FunASR 录音文件识别异步接口。"
           />
         </div>
       </SectionBlock>

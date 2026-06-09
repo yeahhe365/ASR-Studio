@@ -2,6 +2,7 @@ export type Theme = 'light' | 'dark';
 
 export enum AsrProvider {
   QWEN = 'qwen',
+  BAILIAN_FUN_ASR = 'bailian-fun-asr',
   DOUBAO = 'doubao',
   GEMINI = 'gemini',
   NVIDIA_NIM = 'nvidia-nim',
@@ -11,6 +12,7 @@ export enum AsrProvider {
 export interface AsrProviderConfig {
   provider: AsrProvider;
   qwenApiKey: string;
+  bailianFunAsrApiKey: string;
   doubaoApiKey: string;
   doubaoAccessKey: string;
   geminiApiKey: string;

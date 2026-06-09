@@ -1,4 +1,4 @@
-const CACHE_NAME = 'asr-studio-runtime-v2';
+const CACHE_NAME = 'asr-studio-runtime-v3';
 const APP_SHELL_URLS = ['/', '/index.html', '/manifest.json', '/favicon.svg'];
 const CACHEABLE_DESTINATIONS = new Set(['document', 'font', 'image', 'manifest', 'script', 'style', 'worker']);
 

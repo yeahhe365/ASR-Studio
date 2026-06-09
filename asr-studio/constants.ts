@@ -4,6 +4,12 @@ export const QWEN_ASR_API_URL = 'https://dashscope.aliyuncs.com/compatible-mode/
 export const QWEN_ASR_MODEL = 'qwen3-asr-flash';
 export const QWEN_INLINE_AUDIO_LIMIT_BYTES = 10 * 1024 * 1024;
 
+export const BAILIAN_FUN_ASR_TRANSCRIPTION_URL =
+  'https://dashscope.aliyuncs.com/api/v1/services/audio/asr/transcription';
+export const BAILIAN_FUN_ASR_TASK_URL = 'https://dashscope.aliyuncs.com/api/v1/tasks';
+export const BAILIAN_FUN_ASR_MODEL = 'fun-asr';
+export const DASHSCOPE_BROWSER_PROXY_PATH = '/dashscope';
+
 export const DOUBAO_ASR_SUBMIT_URL = 'https://openspeech.bytedance.com/api/v3/auc/bigmodel/submit';
 export const DOUBAO_ASR_QUERY_URL = 'https://openspeech.bytedance.com/api/v3/auc/bigmodel/query';
 export const DOUBAO_ASR_MODEL = 'bigmodel';
