@@ -207,6 +207,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
                         } focus-visible:ring-2 focus-visible:ring-[var(--theme-border-focus)]`}
                       >
                         <Icon
+                          strokeWidth={isActive ? 2 : 1.5}
                           className={`h-4 w-4 md:h-[18px] md:w-[18px] ${isActive ? 'text-[var(--theme-text-primary)]' : 'text-[var(--theme-text-tertiary)]'}`}
                         />
                         <span>{tab.label}</span>

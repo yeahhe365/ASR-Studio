@@ -3,7 +3,9 @@ import assert from 'node:assert/strict';
 import { describe, test } from 'node:test';
 import { renderToStaticMarkup } from 'react-dom/server';
 
+import { SettingsPanel } from '../components/SettingsPanel.tsx';
 import { ApiSettingsSection } from '../components/settings/ApiSettingsSection.tsx';
+import { tabs } from '../components/settings/settingsConfig.ts';
 import type { AppSettingsSetters, AppSettingsValues } from '../hooks/useAppSettings.ts';
 import { AsrProvider, CompressionLevel, Language, MainstreamAsrModel, NvidiaNimTask, type Theme } from '../types.ts';
 
@@ -72,6 +74,37 @@ const setters: AppSettingsSetters = {
 };
 
 describe('settings controls', () => {
+  test('uses AMC matching icons for API and interface settings tabs', () => {
+    const tabsById = new Map(tabs.map((tab) => [tab.id, tab]));
+
+    assert.equal(tabsById.get('api')?.Icon.displayName, 'KeyRound');
+    assert.equal(tabsById.get('interface')?.Icon.displayName, 'LayoutPanelLeft');
+  });
+
+  test('renders settings tab icons with AMC active and inactive stroke weights', () => {
+    const html = renderToStaticMarkup(
+      React.createElement(SettingsPanel, {
+        isOpen: true,
+        onClose: () => undefined,
+        values,
+        setters,
+        audioDevices: [],
+        onClearHistory: async () => true,
+        onClearTranscriptionCache: async () => true,
+        onClearRecordingCache: async () => true,
+        onImportHistory: async () => 0,
+        onRestoreDefaults: () => undefined,
+        storageEstimate: null,
+        disabled: false,
+        canInstall: false,
+        onInstallApp: () => undefined,
+      }),
+    );
+
+    assert.match(html, /aria-selected="true"[\s\S]*?stroke-width="2"[\s\S]*?<span>API<\/span>/);
+    assert.match(html, /aria-selected="false"[\s\S]*?stroke-width="1.5"[\s\S]*?<span>界面<\/span>/);
+  });
+
   test('stacks the API provider selector so long option sets do not squeeze the label', () => {
     const html = renderToStaticMarkup(
       React.createElement(ApiSettingsSection, {
