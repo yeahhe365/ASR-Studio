@@ -6,7 +6,6 @@ import { getAudioSourceUrl } from '../remoteAudioFile';
 
 type DoubaoAsrConfig = {
   apiKey: string;
-  accessKey: string;
 };
 
 type DoubaoAsrResponse = {
@@ -73,18 +72,9 @@ const doubaoLanguageMap: Partial<Record<Language, string>> = {
   [Language.PORTUGUESE]: 'pt-BR',
 };
 
-const createAuthHeaders = (apiKey: string, accessKey: string) => {
-  if (accessKey) {
-    return {
-      'X-Api-App-Key': apiKey,
-      'X-Api-Access-Key': accessKey,
-    };
-  }
-
-  return {
-    'X-Api-Key': apiKey,
-  };
-};
+const createAuthHeaders = (apiKey: string) => ({
+  'X-Api-Key': apiKey,
+});
 
 const createDoubaoRequestBody = (
   uid: string,
@@ -260,7 +250,7 @@ const assertSubmitAccepted = async (response: Response) => {
   }
 };
 
-const queryDoubaoResult = async (apiKey: string, accessKey: string, requestId: string, signal: AbortSignal) => {
+const queryDoubaoResult = async (apiKey: string, requestId: string, signal: AbortSignal) => {
   for (let attempt = 0; attempt < MAX_POLL_ATTEMPTS; attempt += 1) {
     if (attempt > 0) {
       await waitForPollInterval(signal);
@@ -269,7 +259,7 @@ const queryDoubaoResult = async (apiKey: string, accessKey: string, requestId: s
     const response = await fetch(DOUBAO_ASR_QUERY_URL, {
       method: 'POST',
       headers: {
-        ...createAuthHeaders(apiKey, accessKey),
+        ...createAuthHeaders(apiKey),
         'Content-Type': 'application/json',
         'X-Api-Resource-Id': DOUBAO_ASR_RESOURCE_ID,
         'X-Api-Request-Id': requestId,
@@ -310,7 +300,6 @@ export const transcribeWithDoubao = async (
   signal: AbortSignal,
 ): Promise<TranscriptionResult> => {
   const apiKey = config.apiKey.trim();
-  const accessKey = config.accessKey.trim();
 
   if (!apiKey) {
     throw new Error('豆包 API Key 未设置。请在设置中配置。');
@@ -330,7 +319,7 @@ export const transcribeWithDoubao = async (
   const response = await fetch(DOUBAO_ASR_SUBMIT_URL, {
     method: 'POST',
     headers: {
-      ...createAuthHeaders(apiKey, accessKey),
+      ...createAuthHeaders(apiKey),
       'Content-Type': 'application/json',
       'X-Api-Resource-Id': DOUBAO_ASR_RESOURCE_ID,
       'X-Api-Request-Id': requestId,
@@ -341,5 +330,5 @@ export const transcribeWithDoubao = async (
   });
 
   await assertSubmitAccepted(response);
-  return queryDoubaoResult(apiKey, accessKey, requestId, signal);
+  return queryDoubaoResult(apiKey, requestId, signal);
 };

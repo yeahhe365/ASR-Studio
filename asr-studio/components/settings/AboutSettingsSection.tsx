@@ -4,8 +4,8 @@ import { LogoIcon } from '../icons/LogoIcon';
 
 export const AboutSettingsSection: React.FC = () => (
   <div className="flex min-h-full flex-col items-center justify-center px-4 py-8 text-center">
-    <div className="flex h-24 w-24 items-center justify-center rounded-lg bg-[var(--theme-bg-accent)] text-[var(--theme-text-accent)] shadow-2xl shadow-black/10 dark:shadow-black/40">
-      <LogoIcon className="h-12 w-12" />
+    <div className="flex h-24 w-24 items-center justify-center overflow-hidden rounded-[28%] shadow-2xl shadow-black/10 ring-1 ring-black/5 dark:shadow-black/40 dark:ring-white/10">
+      <LogoIcon className="h-24 w-24 object-cover" />
     </div>
     <div className="mt-5 flex flex-wrap items-center justify-center gap-2">
       <span className="rounded-md border border-[var(--theme-border-secondary)] bg-[var(--theme-bg-input)] px-4 py-1.5 font-mono text-sm font-bold text-[var(--theme-text-primary)]">

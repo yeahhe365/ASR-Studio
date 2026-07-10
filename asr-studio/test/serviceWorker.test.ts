@@ -9,7 +9,10 @@ describe('service worker', () => {
     const source = await readFile(serviceWorkerPath, 'utf8');
 
     assert.match(source, /CACHE_NAME/);
-    assert.match(source, /APP_SHELL_URLS = \['\/', '\/index\.html', '\/manifest\.json', '\/favicon\.svg'\]/);
+    assert.match(
+      source,
+      /APP_SHELL_URLS = \['\/', '\/index\.html', '\/manifest\.json', '\/favicon\.svg', '\/logo-mark\.png', '\/favicon-32\.png'\]/,
+    );
     assert.match(source, /networkFirstNavigation/);
     assert.match(source, /cacheFirstAsset/);
     assert.match(source, /self\.clients\.claim/);

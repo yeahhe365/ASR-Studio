@@ -1,27 +1,27 @@
 import React from 'react';
 
-export const LogoIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 24 24"
-    fill="none"
+type LogoIconProps = React.ImgHTMLAttributes<HTMLImageElement> & {
+  /** Kept for call-site compatibility with the previous SVG API. */
+  className?: string;
+};
+
+/**
+ * Brand mark from the selected ASR Studio logo
+ * (white rounded tile + cyan→blue spectrum bars).
+ * Corner radius is baked into logo-mark.png (~28% R);
+ * CSS rounded-[28%] is a fallback for crisp clipping.
+ */
+export const LogoIcon: React.FC<LogoIconProps> = ({
+  className,
+  alt = 'ASR Studio',
+  draggable = false,
+  ...props
+}) => (
+  <img
+    src="/logo-mark.png"
+    alt={alt}
+    draggable={draggable}
+    className={['rounded-[28%]', className].filter(Boolean).join(' ')}
     {...props}
-  >
-    <rect x="8" y="3" width="8" height="12" rx="4" fill="currentColor" />
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      d="M12 16.5a5 5 0 0 0 5-5V10m-5 6.5a5 5 0 0 1-5-5V10m5 6.5v3.25M8.75 19.75h6.5M4.5 10.5v3M19.5 10.5v3"
-      stroke="currentColor"
-      strokeWidth={2}
-      opacity={0.88}
-    />
-    <path
-      strokeLinecap="round"
-      d="M10.35 6.4v5.1M13.65 6.4v5.1"
-      stroke="var(--color-content-100, currentColor)"
-      strokeWidth={1.35}
-      opacity={0.34}
-    />
-  </svg>
+  />
 );

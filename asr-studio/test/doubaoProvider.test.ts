@@ -70,7 +70,7 @@ describe('transcribeWithDoubao', () => {
       '',
       Language.CHINESE,
       true,
-      { apiKey: ' doubao-key ', accessKey: '' },
+      { apiKey: ' doubao-key ' },
       new AbortController().signal,
     );
 
@@ -135,7 +135,7 @@ describe('transcribeWithDoubao', () => {
       '',
       Language.AUTO,
       true,
-      { apiKey: 'doubao-key', accessKey: '' },
+      { apiKey: 'doubao-key' },
       new AbortController().signal,
     );
 
@@ -195,7 +195,7 @@ describe('transcribeWithDoubao', () => {
       '',
       Language.AUTO,
       false,
-      { apiKey: 'doubao-key', accessKey: '' },
+      { apiKey: 'doubao-key' },
       new AbortController().signal,
     );
 
@@ -231,7 +231,7 @@ describe('transcribeWithDoubao', () => {
           '',
           Language.AUTO,
           true,
-          { apiKey: 'doubao-key', accessKey: '' },
+          { apiKey: 'doubao-key' },
           new AbortController().signal,
         ),
       /raw\/wav\/mp3\/ogg/,

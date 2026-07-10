@@ -91,7 +91,6 @@ export const createBenchmarkRunConfigSnapshot = ({
     qwenApiKey: providerConfig.qwenApiKey ? '[configured]' : '',
     bailianFunAsrApiKey: providerConfig.bailianFunAsrApiKey ? '[configured]' : '',
     doubaoApiKey: providerConfig.doubaoApiKey ? '[configured]' : '',
-    doubaoAccessKey: providerConfig.doubaoAccessKey ? '[configured]' : '',
     geminiApiKey: providerConfig.geminiApiKey ? '[configured]' : '',
     nvidiaNimApiKey: providerConfig.nvidiaNimApiKey ? '[configured]' : '',
     mainstreamAsrApiKey: providerConfig.mainstreamAsrApiKey ? '[configured]' : '',

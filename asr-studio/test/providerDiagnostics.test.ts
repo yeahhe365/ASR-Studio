@@ -9,7 +9,6 @@ const baseConfig: AsrProviderConfig = {
   qwenApiKey: '',
   bailianFunAsrApiKey: '',
   doubaoApiKey: '',
-  doubaoAccessKey: '',
   geminiApiKey: '',
   nvidiaNimBaseUrl: '',
   nvidiaNimApiKey: '',

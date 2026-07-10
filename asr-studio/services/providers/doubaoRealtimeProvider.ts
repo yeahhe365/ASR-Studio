@@ -6,7 +6,6 @@ import {
 
 type DoubaoRealtimeAsrConfig = {
   apiKey: string;
-  accessKey: string;
 };
 
 type DoubaoRealtimeCallbacks = {
@@ -219,9 +218,6 @@ const createProxyUrl = (config: DoubaoRealtimeAsrConfig) => {
   const url = new URL(DOUBAO_REALTIME_ASR_PROXY_PATH, window.location.origin);
   url.protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
   url.searchParams.set('apiKey', config.apiKey.trim());
-  if (config.accessKey.trim()) {
-    url.searchParams.set('accessKey', config.accessKey.trim());
-  }
   return url.toString();
 };
 

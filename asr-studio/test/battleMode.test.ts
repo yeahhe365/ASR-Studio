@@ -21,7 +21,6 @@ const baseConfig: AsrProviderConfig = {
   qwenApiKey: 'qwen-key',
   bailianFunAsrApiKey: 'fun-asr-key',
   doubaoApiKey: 'doubao-key',
-  doubaoAccessKey: 'doubao-access',
   geminiApiKey: 'gemini-key',
   nvidiaNimBaseUrl: 'https://nim.example.com/v1',
   nvidiaNimApiKey: 'nim-key',

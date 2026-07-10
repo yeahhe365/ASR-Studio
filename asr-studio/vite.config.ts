@@ -6,7 +6,7 @@ import WebSocket, { WebSocketServer, type RawData } from 'ws';
 
 const DOUBAO_REALTIME_ASR_API_URL = 'wss://openspeech.bytedance.com/api/v3/sauc/bigmodel';
 const DOUBAO_REALTIME_ASR_PROXY_PATH = '/doubao-realtime-asr';
-const DOUBAO_REALTIME_ASR_RESOURCE_ID = 'volc.bigasr.sauc.duration';
+const DOUBAO_REALTIME_ASR_RESOURCE_ID = 'volc.seedasr.sauc.duration';
 
 const createDoubaoRealtimeProxyPlugin = (): Plugin => ({
   name: 'doubao-realtime-asr-proxy',
@@ -19,7 +19,6 @@ const createDoubaoRealtimeProxyPlugin = (): Plugin => ({
       }
 
       const apiKey = requestUrl.searchParams.get('apiKey') || '';
-      const accessKey = requestUrl.searchParams.get('accessKey') || '';
 
       if (!apiKey) {
         socket.write('HTTP/1.1 401 Unauthorized\r\n\r\n');
@@ -31,17 +30,11 @@ const createDoubaoRealtimeProxyPlugin = (): Plugin => ({
 
       client.handleUpgrade(request, socket, head, (browserSocket) => {
         const headers: Record<string, string> = {
+          'X-Api-Key': apiKey,
           'X-Api-Resource-Id': DOUBAO_REALTIME_ASR_RESOURCE_ID,
           'X-Api-Request-Id': randomUUID(),
           'X-Api-Connect-Id': randomUUID(),
         };
-
-        if (accessKey) {
-          headers['X-Api-App-Key'] = apiKey;
-          headers['X-Api-Access-Key'] = accessKey;
-        } else {
-          headers['X-Api-Key'] = apiKey;
-        }
 
         const doubaoSocket = new WebSocket(DOUBAO_REALTIME_ASR_API_URL, { headers });
         const pendingMessages: Array<{ data: RawData; isBinary: boolean }> = [];

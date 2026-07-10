@@ -14,7 +14,6 @@ export interface AsrProviderConfig {
   qwenApiKey: string;
   bailianFunAsrApiKey: string;
   doubaoApiKey: string;
-  doubaoAccessKey: string;
   geminiApiKey: string;
   nvidiaNimBaseUrl: string;
   nvidiaNimApiKey: string;

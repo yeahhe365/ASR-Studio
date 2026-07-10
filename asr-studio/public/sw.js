@@ -1,5 +1,5 @@
-const CACHE_NAME = 'asr-studio-runtime-v3';
-const APP_SHELL_URLS = ['/', '/index.html', '/manifest.json', '/favicon.svg'];
+const CACHE_NAME = 'asr-studio-runtime-v5';
+const APP_SHELL_URLS = ['/', '/index.html', '/manifest.json', '/favicon.svg', '/logo-mark.png', '/favicon-32.png'];
 const CACHEABLE_DESTINATIONS = new Set(['document', 'font', 'image', 'manifest', 'script', 'style', 'worker']);
 
 const isSameOriginGet = (request) => {

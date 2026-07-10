@@ -10,7 +10,6 @@ const createConfig = (patch: Partial<AsrProviderConfig> = {}): AsrProviderConfig
   qwenApiKey: 'qwen-key',
   bailianFunAsrApiKey: 'bailian-key',
   doubaoApiKey: 'doubao-key',
-  doubaoAccessKey: '',
   geminiApiKey: 'gemini-key',
   nvidiaNimBaseUrl: 'http://localhost:9000',
   nvidiaNimApiKey: '',

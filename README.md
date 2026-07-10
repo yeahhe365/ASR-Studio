@@ -154,7 +154,7 @@ GET /healthz
 ## 🔐 Provider 使用说明
 
 - **Qwen / Gemini**: 使用浏览器内联音频请求，文件过大时请先压缩、裁剪或切片。
-- **豆包标准版 2.0**: 本地文件和录音会按 `audio.data` 提交；也可使用公网可访问的音频 URL。
+- **豆包标准版 2.0**: 仅支持新版控制台 `X-Api-Key` 鉴权与 `volc.seedasr.*` 2.0 资源；本地文件和录音会按 `audio.data` 提交，也可使用公网可访问的音频 URL。
 - **NVIDIA NIM**: NVIDIA 托管 Whisper Large v3 是 gRPC/Riva 服务，浏览器不能直接调用；请填写自托管 NIM 容器或后端代理的 HTTP Base URL。
 - **主流模型库**: 在设置中选择具体模型并填写对应厂商 API Key；Base URL 留空使用官方端点，填写后可走兼容代理或自托管网关。远程 URL 当前支持豆包和 AssemblyAI，其他主流模型使用本地文件上传。
 

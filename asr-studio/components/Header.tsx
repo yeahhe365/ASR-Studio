@@ -65,8 +65,8 @@ export const Header: React.FC<HeaderProps> = ({
     <header className="surface-panel relative z-20 flex w-full min-w-0 max-w-full flex-shrink-0 flex-col gap-2 px-3 py-2 sm:flex-row sm:items-center sm:justify-between sm:gap-3 sm:px-4">
       <div className="flex w-full min-w-0 items-center justify-between gap-2 sm:w-auto sm:justify-start">
         <a href="/" className="group flex min-w-0 items-center gap-3 text-content-100">
-          <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-md bg-content-100 text-base-200 shadow-sm transition-transform group-hover:scale-[1.03]">
-            <LogoIcon className="h-6 w-6" />
+          <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center overflow-hidden rounded-[28%] shadow-sm ring-1 ring-black/5 transition-transform group-hover:scale-[1.03] dark:ring-white/10">
+            <LogoIcon className="h-10 w-10 object-cover" />
           </span>
           <span className="min-w-0 pr-1">
             <span className="block truncate text-base font-semibold leading-tight">ASR Studio</span>

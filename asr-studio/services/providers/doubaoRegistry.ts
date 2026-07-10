@@ -13,26 +13,26 @@ export const doubaoProviderEntry: ProviderRegistryEntry = {
     menuDescription: '录音文件标准版 2.0',
     summaryTitle: '豆包录音文件识别标准版 2.0',
     summaryDetails: `${DOUBAO_ASR_MODEL} · ${DOUBAO_ASR_RESOURCE_ID} · ${DOUBAO_ASR_SUBMIT_URL} · ${DOUBAO_ASR_QUERY_URL}`,
-    summaryNote: '当前按本地文件 base64 的 audio.data 方式提交到标准版 2.0；远程 URL 输入仍保留为可选方式。',
+    summaryNote: '使用新版控制台 X-Api-Key 鉴权与 seedasr 2.0 资源；本地文件按 audio.data 提交，也可使用公网 URL。',
     capabilities: [
       { label: '输入', value: '本地文件 / 录音 / 可选 URL' },
       { label: '格式', value: 'raw / wav / mp3 / ogg' },
       { label: '任务', value: '异步提交与轮询' },
-      { label: '时间戳', value: '可后续扩展解析' },
+      { label: '鉴权', value: 'X-Api-Key（新版控制台）' },
     ],
   },
   diagnose: (config) => [
     {
       label: 'API Key',
       status: config.doubaoApiKey.trim() ? 'ok' : 'error',
-      detail: config.doubaoApiKey.trim() ? '已填写豆包 API Key / App Key。' : '需要填写豆包 API Key 或 App Key。',
+      detail: config.doubaoApiKey.trim()
+        ? '已填写豆包 API Key（新版控制台 X-Api-Key）。'
+        : '需要填写豆包新版控制台 API Key。',
     },
     {
-      label: 'Access Key',
-      status: config.doubaoAccessKey.trim() ? 'ok' : 'warning',
-      detail: config.doubaoAccessKey.trim()
-        ? '已启用旧版 App Key + Access Key 鉴权。'
-        : '未填写 Access Key，将使用新版 X-Api-Key 鉴权。',
+      label: '资源版本',
+      status: 'ok',
+      detail: `使用录音文件识别 2.0：${DOUBAO_ASR_RESOURCE_ID}。`,
     },
     {
       label: '音频来源',
@@ -42,7 +42,7 @@ export const doubaoProviderEntry: ProviderRegistryEntry = {
   ],
   getReadinessError: (config, file, audioSourceUrl) => {
     if (!config.doubaoApiKey.trim()) {
-      return '豆包 API Key 未设置。请在设置中配置。';
+      return '豆包 API Key 未设置。请在设置中配置新版控制台 API Key。';
     }
 
     if (audioSourceUrl && !isServerAccessibleHttpUrl(audioSourceUrl)) {
@@ -66,7 +66,7 @@ export const doubaoProviderEntry: ProviderRegistryEntry = {
       context,
       language,
       enableItn,
-      { apiKey: config.doubaoApiKey, accessKey: config.doubaoAccessKey },
+      { apiKey: config.doubaoApiKey },
       signal,
     ),
 };

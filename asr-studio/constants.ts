@@ -16,7 +16,7 @@ export const DOUBAO_ASR_MODEL = 'bigmodel';
 export const DOUBAO_ASR_RESOURCE_ID = 'volc.seedasr.auc';
 export const DOUBAO_REALTIME_ASR_API_URL = 'wss://openspeech.bytedance.com/api/v3/sauc/bigmodel';
 export const DOUBAO_REALTIME_ASR_PROXY_PATH = '/doubao-realtime-asr';
-export const DOUBAO_REALTIME_ASR_RESOURCE_ID = 'volc.bigasr.sauc.duration';
+export const DOUBAO_REALTIME_ASR_RESOURCE_ID = 'volc.seedasr.sauc.duration';
 export const DOUBAO_REALTIME_ASR_SAMPLE_RATE = 16000;
 
 export const GEMINI_ASR_MODEL = 'gemini-3.5-flash';

@@ -65,7 +65,7 @@ The app calls the selected ASR provider directly. Configure Qwen, Doubao, Gemini
 
 ### Doubao Realtime ASR
 
-Browser WebSocket connections cannot attach the custom `X-Api-*` headers required by Doubao, so the Vite dev server includes a same-origin proxy at `/doubao-realtime-asr`. Production deployments that serve the app as static files need to provide the same WebSocket proxy path and forward traffic to `wss://openspeech.bytedance.com/api/v3/sauc/bigmodel` with the required Doubao headers.
+Browser WebSocket connections cannot attach the custom `X-Api-*` headers required by Doubao, so the Vite dev server includes a same-origin proxy at `/doubao-realtime-asr`. Production deployments that serve the app as static files need to provide the same WebSocket proxy path and forward traffic to `wss://openspeech.bytedance.com/api/v3/sauc/bigmodel` with new-console auth (`X-Api-Key`) and the 2.0 resource id `volc.seedasr.sauc.duration`.
 
 A minimal Node proxy example is available at `server/doubaoRealtimeProxy.js`:
 
@@ -73,7 +73,7 @@ A minimal Node proxy example is available at `server/doubaoRealtimeProxy.js`:
 PORT=8787 DOUBAO_API_KEY=your-api-key npm run doubao:realtime-proxy
 ```
 
-Place this proxy behind the same origin as the frontend, or route `/doubao-realtime-asr` to it from your web server.
+Place this proxy behind the same origin as the frontend, or route `/doubao-realtime-asr` to it from your web server. Old App Key + Access Key auth is no longer supported.
 
 ## Verification
 

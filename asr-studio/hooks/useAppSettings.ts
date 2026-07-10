@@ -30,7 +30,6 @@ export type AppSettingsValues = {
   qwenApiKey: string;
   bailianFunAsrApiKey: string;
   doubaoApiKey: string;
-  doubaoAccessKey: string;
   geminiApiKey: string;
   nvidiaNimBaseUrl: string;
   nvidiaNimApiKey: string;
@@ -61,7 +60,6 @@ export type AppSettingsSetters = {
   setQwenApiKey: Dispatch<SetStateAction<string>>;
   setBailianFunAsrApiKey: Dispatch<SetStateAction<string>>;
   setDoubaoApiKey: Dispatch<SetStateAction<string>>;
-  setDoubaoAccessKey: Dispatch<SetStateAction<string>>;
   setGeminiApiKey: Dispatch<SetStateAction<string>>;
   setNvidiaNimBaseUrl: Dispatch<SetStateAction<string>>;
   setNvidiaNimApiKey: Dispatch<SetStateAction<string>>;
@@ -92,7 +90,6 @@ const DEFAULT_SETTINGS: AppSettingsValues = {
   qwenApiKey: '',
   bailianFunAsrApiKey: '',
   doubaoApiKey: '',
-  doubaoAccessKey: '',
   geminiApiKey: '',
   nvidiaNimBaseUrl: '',
   nvidiaNimApiKey: '',
@@ -201,7 +198,6 @@ export function useAppSettings() {
     DEFAULT_SETTINGS.bailianFunAsrApiKey,
   );
   const [doubaoApiKey, setDoubaoApiKey] = usePersistentState('doubaoApiKey', DEFAULT_SETTINGS.doubaoApiKey);
-  const [doubaoAccessKey, setDoubaoAccessKey] = usePersistentState('doubaoAccessKey', DEFAULT_SETTINGS.doubaoAccessKey);
   const [geminiApiKey, setGeminiApiKey] = usePersistentState('geminiApiKey', DEFAULT_SETTINGS.geminiApiKey);
   const [nvidiaNimBaseUrl, setNvidiaNimBaseUrl] = usePersistentState(
     'nvidiaNimBaseUrl',
@@ -237,7 +233,6 @@ export function useAppSettings() {
       qwenApiKey,
       bailianFunAsrApiKey,
       doubaoApiKey,
-      doubaoAccessKey,
       geminiApiKey,
       nvidiaNimBaseUrl,
       nvidiaNimApiKey,
@@ -250,7 +245,6 @@ export function useAppSettings() {
     [
       asrProvider,
       bailianFunAsrApiKey,
-      doubaoAccessKey,
       doubaoApiKey,
       geminiApiKey,
       mainstreamAsrApiKey,
@@ -284,7 +278,6 @@ export function useAppSettings() {
     setQwenApiKey(DEFAULT_SETTINGS.qwenApiKey);
     setBailianFunAsrApiKey(DEFAULT_SETTINGS.bailianFunAsrApiKey);
     setDoubaoApiKey(DEFAULT_SETTINGS.doubaoApiKey);
-    setDoubaoAccessKey(DEFAULT_SETTINGS.doubaoAccessKey);
     setGeminiApiKey(DEFAULT_SETTINGS.geminiApiKey);
     setNvidiaNimBaseUrl(DEFAULT_SETTINGS.nvidiaNimBaseUrl);
     setNvidiaNimApiKey(DEFAULT_SETTINGS.nvidiaNimApiKey);
@@ -302,7 +295,6 @@ export function useAppSettings() {
     setBattleProviderB,
     setCompressionLevel,
     setContext,
-    setDoubaoAccessKey,
     setDoubaoApiKey,
     setAutoGainControl,
     setEchoCancellation,
@@ -335,7 +327,6 @@ export function useAppSettings() {
       bailianFunAsrApiKey,
       compressionLevel,
       context,
-      doubaoAccessKey,
       doubaoApiKey,
       enableItn,
       echoCancellation,
@@ -365,7 +356,6 @@ export function useAppSettings() {
       bailianFunAsrApiKey,
       compressionLevel,
       context,
-      doubaoAccessKey,
       doubaoApiKey,
       enableItn,
       echoCancellation,
@@ -398,7 +388,6 @@ export function useAppSettings() {
       setBailianFunAsrApiKey,
       setCompressionLevel,
       setContext,
-      setDoubaoAccessKey,
       setDoubaoApiKey,
       setEchoCancellation,
       setEnableLongAudioChunking,
@@ -428,7 +417,6 @@ export function useAppSettings() {
       setBailianFunAsrApiKey,
       setCompressionLevel,
       setContext,
-      setDoubaoAccessKey,
       setDoubaoApiKey,
       setEchoCancellation,
       setEnableLongAudioChunking,

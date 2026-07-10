@@ -68,7 +68,6 @@ export const ProviderCredentialsSection: React.FC<ProviderCredentialsSectionProp
     qwenApiKey,
     bailianFunAsrApiKey,
     doubaoApiKey,
-    doubaoAccessKey,
     geminiApiKey,
     nvidiaNimBaseUrl,
     nvidiaNimApiKey,
@@ -82,7 +81,6 @@ export const ProviderCredentialsSection: React.FC<ProviderCredentialsSectionProp
     setQwenApiKey,
     setBailianFunAsrApiKey,
     setDoubaoApiKey,
-    setDoubaoAccessKey,
     setGeminiApiKey,
     setNvidiaNimBaseUrl,
     setNvidiaNimApiKey,
@@ -137,23 +135,13 @@ export const ProviderCredentialsSection: React.FC<ProviderCredentialsSectionProp
         <div className="space-y-4 py-3">
           <CredentialInput
             id="doubao-api-key-setting"
-            label="API Key / App Key"
+            label="API Key"
             type="password"
             value={doubaoApiKey}
             onChange={setDoubaoApiKey}
             disabled={disabled}
-            placeholder="your-api-key-or-app-key"
-            helpText="新版控制台填写 API Key；旧版鉴权填写 App Key 并补充 Access Key。"
-          />
-          <CredentialInput
-            id="doubao-access-key-setting"
-            label="Access Key（可选）"
-            type="password"
-            value={doubaoAccessKey}
-            onChange={setDoubaoAccessKey}
-            disabled={disabled}
-            placeholder="旧版 Access Key，可留空"
-            helpText="仅旧版鉴权需要；留空时使用新版 X-Api-Key 鉴权。"
+            placeholder="your-api-key"
+            helpText="填写火山引擎豆包语音新版控制台 API Key（X-Api-Key），对应录音文件识别 2.0。"
           />
         </div>
       </SectionBlock>

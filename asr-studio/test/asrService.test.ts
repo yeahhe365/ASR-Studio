@@ -26,7 +26,6 @@ const qwenConfig: AsrProviderConfig = {
   qwenApiKey: 'qwen-key',
   bailianFunAsrApiKey: '',
   doubaoApiKey: '',
-  doubaoAccessKey: '',
   geminiApiKey: '',
   nvidiaNimBaseUrl: '',
   nvidiaNimApiKey: '',
