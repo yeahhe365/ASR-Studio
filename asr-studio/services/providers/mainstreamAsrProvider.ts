@@ -472,6 +472,20 @@ const getDeepgramTranscript = (result: DeepgramResponse) => {
   );
 };
 
+/** OpenAI gpt-4o-* models reject verbose_json; use the format each model supports. */
+export const resolveOpenAiCompatibleResponseFormat = (modelName: string) => {
+  if (modelName === 'gpt-4o-transcribe-diarize') {
+    return 'diarized_json';
+  }
+
+  if (modelName === 'gpt-4o-transcribe' || modelName === 'gpt-4o-mini-transcribe') {
+    return 'json';
+  }
+
+  // whisper-1 and Whisper-compatible OpenAI-compatible gateways
+  return 'verbose_json';
+};
+
 const createOpenAiCompatibleFormData = (
   audioFile: File,
   descriptor: MainstreamAsrModelDescriptor,
@@ -482,7 +496,7 @@ const createOpenAiCompatibleFormData = (
   const formData = new FormData();
   formData.append('file', audioFile, audioFile.name || 'audio.wav');
   formData.append('model', modelName);
-  formData.append('response_format', 'verbose_json');
+  formData.append('response_format', resolveOpenAiCompatibleResponseFormat(modelName));
 
   const apiLanguage = getApiLanguage(language);
   if (apiLanguage && descriptor.supportsLanguage) {

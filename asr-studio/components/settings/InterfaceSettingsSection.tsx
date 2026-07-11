@@ -10,8 +10,8 @@ export const InterfaceSettingsSection: React.FC<InterfaceSettingsSectionProps> =
   const { setAutoCopy, setTheme } = setters;
 
   return (
-    <div className="space-y-6">
-      <SectionBlock title="界面" icon={<PaletteIcon className="h-3.5 w-3.5" />}>
+    <div className="space-y-5">
+      <SectionBlock title="外观与输出" icon={<PaletteIcon className="h-4 w-4" />} description="调整界面外观与结果输出偏好。">
         <SettingRow label="主题" description="切换浅色或深色外观。">
           <SegmentedControl
             ariaLabel="主题"
@@ -24,7 +24,13 @@ export const InterfaceSettingsSection: React.FC<InterfaceSettingsSectionProps> =
             ]}
           />
         </SettingRow>
-        <SettingRow label="自动复制结果" description="识别完成后自动将结果复制到剪贴板。">
+        <SettingRow
+          label="自动复制结果"
+          description="识别完成后自动将结果复制到剪贴板。"
+          htmlFor="auto-copy"
+          onActivate={disabled ? undefined : () => setAutoCopy(!autoCopy)}
+          disabled={disabled}
+        >
           <ToggleSwitch id="auto-copy" enabled={autoCopy} onChange={setAutoCopy} disabled={disabled} />
         </SettingRow>
       </SectionBlock>

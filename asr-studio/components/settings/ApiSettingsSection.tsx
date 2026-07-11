@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import {
   asrProviderCapabilityMatrix,
+  asrProviderMenuOptions,
   asrProviderMetadata,
   asrProviderSegmentOptions,
   diagnoseProviderConfig,
@@ -13,10 +14,11 @@ import { ApiKeyIcon } from '../icons/ApiKeyIcon';
 import { ServerIcon } from '../icons/ServerIcon';
 import { WarningIcon } from '../icons/WarningIcon';
 import {
+  CollapsibleSection,
+  inputClassName,
   outlineButtonClassName,
   ProviderSummary,
   SectionBlock,
-  SegmentedControl,
   SettingRow,
 } from './SettingsControls';
 import {
@@ -56,76 +58,56 @@ const getCapabilityStatusClassName = (status: ProviderCapabilityStatus) => {
 };
 
 const ProviderCapabilityMatrix: React.FC<{ activeProvider: AsrProvider }> = ({ activeProvider }) => (
-  <SectionBlock title="能力矩阵" icon={<ServerIcon className="h-3.5 w-3.5" />}>
-    <div className="overflow-x-auto rounded-md border border-[var(--theme-border-secondary)]">
-      <table className="min-w-[760px] table-fixed text-left text-xs">
-        <thead className="bg-[var(--theme-bg-tertiary)]/45 text-[var(--theme-text-tertiary)]">
-          <tr>
-            <th scope="col" className="w-40 px-3 py-2 font-semibold">
-              能力
+  <div className="overflow-x-auto rounded-md border border-[var(--theme-border-secondary)]">
+    <table className="min-w-[760px] table-fixed text-left text-xs">
+      <thead className="bg-[var(--theme-bg-tertiary)]/45 text-[var(--theme-text-tertiary)]">
+        <tr>
+          <th scope="col" className="w-40 px-3 py-2 font-semibold">
+            能力
+          </th>
+          {asrProviderSegmentOptions.map((option) => (
+            <th
+              key={option.value}
+              scope="col"
+              className={`px-3 py-2 font-semibold ${option.value === activeProvider ? 'text-[var(--theme-text-primary)]' : ''}`}
+            >
+              {option.label}
             </th>
-            {asrProviderSegmentOptions.map((option) => (
-              <th
-                key={option.value}
-                scope="col"
-                className={`px-3 py-2 font-semibold ${option.value === activeProvider ? 'text-[var(--theme-text-primary)]' : ''}`}
-              >
-                {option.label}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-[var(--theme-border-secondary)]">
-          {asrProviderCapabilityMatrix.map((row) => (
-            <tr key={row.id} className="align-top">
-              <th scope="row" className="px-3 py-3">
-                <p className="text-sm font-medium text-[var(--theme-text-primary)]">{row.label}</p>
-                <p className="mt-1 text-[11px] leading-relaxed text-[var(--theme-text-tertiary)]">{row.description}</p>
-              </th>
-              {asrProviderSegmentOptions.map((option) => {
-                const cell = row.cells[option.value];
-
-                return (
-                  <td
-                    key={option.value}
-                    className={`px-3 py-3 ${option.value === activeProvider ? 'bg-[var(--theme-bg-tertiary)]/20' : ''}`}
-                  >
-                    <span
-                      className={`inline-flex rounded-md border px-2 py-0.5 text-[11px] font-semibold ${getCapabilityStatusClassName(
-                        cell.status,
-                      )}`}
-                    >
-                      {cell.label}
-                    </span>
-                    <p className="mt-2 leading-relaxed text-[var(--theme-text-tertiary)]">{cell.detail}</p>
-                  </td>
-                );
-              })}
-            </tr>
           ))}
-        </tbody>
-      </table>
-    </div>
-  </SectionBlock>
+        </tr>
+      </thead>
+      <tbody className="divide-y divide-[var(--theme-border-secondary)]">
+        {asrProviderCapabilityMatrix.map((row) => (
+          <tr key={row.id} className="align-top">
+            <th scope="row" className="px-3 py-3">
+              <p className="text-sm font-medium text-[var(--theme-text-primary)]">{row.label}</p>
+              <p className="mt-1 text-[11px] leading-relaxed text-[var(--theme-text-tertiary)]">{row.description}</p>
+            </th>
+            {asrProviderSegmentOptions.map((option) => {
+              const cell = row.cells[option.value];
+
+              return (
+                <td
+                  key={option.value}
+                  className={`px-3 py-3 ${option.value === activeProvider ? 'bg-[var(--theme-bg-tertiary)]/20' : ''}`}
+                >
+                  <span
+                    className={`inline-flex rounded-md border px-2 py-0.5 text-[11px] font-semibold ${getCapabilityStatusClassName(
+                      cell.status,
+                    )}`}
+                  >
+                    {cell.label}
+                  </span>
+                  <p className="mt-2 leading-relaxed text-[var(--theme-text-tertiary)]">{cell.detail}</p>
+                </td>
+              );
+            })}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
 );
-
-const ProviderDetails: React.FC<{
-  provider: AsrProvider;
-  providerConfig: ReturnType<typeof createProviderConfig>;
-}> = ({ provider, providerConfig }) => {
-  const metadata = asrProviderMetadata[provider];
-
-  return (
-    <div className="space-y-4">
-      <ProviderSummary
-        title={metadata.summaryTitle}
-        details={getProviderSummaryDetails(providerConfig)}
-        note={metadata.summaryNote}
-      />
-      <ProviderCapabilities provider={provider} />
-    </div>
-  );
-};
 
 const createProviderConfig = ({
   asrProvider,
@@ -168,7 +150,9 @@ export const ApiSettingsSection: React.FC<ApiSettingsSectionProps> = ({ values, 
     setMainstreamAsrApiKey,
   } = setters;
   const currentProviderLabel = asrProviderMetadata[asrProvider].label;
+  const currentProviderMeta = asrProviderMetadata[asrProvider];
   const providerConfig = useMemo(() => createProviderConfig(values), [values]);
+  const selectedMenuOption = asrProviderMenuOptions.find((option) => option.provider === asrProvider);
 
   useEffect(() => {
     setDiagnosticReport(null);
@@ -190,6 +174,7 @@ export const ApiSettingsSection: React.FC<ApiSettingsSectionProps> = ({ values, 
 
     clearCredentials[asrProvider]();
   };
+
   const runDiagnostics = () => {
     if (disabled) {
       return;
@@ -199,32 +184,56 @@ export const ApiSettingsSection: React.FC<ApiSettingsSectionProps> = ({ values, 
   };
 
   return (
-    <div className="space-y-6">
-      <SectionBlock title="服务模式" icon={<ServerIcon className="h-3.5 w-3.5" />}>
-        <SettingRow label="API 提供商" description="选择当前用于语音识别的模型服务。" layout="stacked">
-          <div className="custom-scrollbar w-full overflow-x-auto pb-1">
-            <SegmentedControl
-              ariaLabel="API 提供商"
+    <div className="space-y-5">
+      <SectionBlock
+        title="识别服务"
+        icon={<ServerIcon className="h-4 w-4" />}
+        description="选择提供商并填写凭据后即可开始识别。"
+      >
+        <div className="space-y-3 px-1 py-1">
+          <div>
+            <label htmlFor="asr-provider-setting" className="text-sm font-medium text-[var(--theme-text-primary)]">
+              API 提供商
+            </label>
+            <p className="mt-0.5 text-xs leading-relaxed text-[var(--theme-text-tertiary)]">
+              当前用于语音识别的模型服务。
+            </p>
+            <select
+              id="asr-provider-setting"
               value={asrProvider}
-              onChange={setAsrProvider}
+              onChange={(event) => setAsrProvider(event.target.value as AsrProvider)}
               disabled={disabled}
-              options={asrProviderSegmentOptions}
-              className="min-w-max"
-            />
+              className={`mt-2 ${inputClassName}`}
+            >
+              {asrProviderMenuOptions.map((option) => (
+                <option key={option.provider} value={option.provider}>
+                  {option.label}
+                  {option.model ? ` · ${option.model}` : ''}
+                </option>
+              ))}
+            </select>
+            {(selectedMenuOption?.description || currentProviderMeta.summaryNote) && (
+              <p className="mt-2 text-xs leading-relaxed text-[var(--theme-text-tertiary)]">
+                {selectedMenuOption?.description || currentProviderMeta.summaryNote}
+              </p>
+            )}
           </div>
-        </SettingRow>
+
+          <div className="rounded-md border border-[var(--theme-border-secondary)] bg-[var(--theme-bg-tertiary)]/20 px-3 py-2.5">
+            <p className="text-xs font-medium text-[var(--theme-text-secondary)]">当前配置摘要</p>
+            <p className="mt-1 break-all font-mono text-[11px] leading-relaxed text-[var(--theme-text-tertiary)]">
+              {getProviderSummaryDetails(providerConfig)}
+            </p>
+          </div>
+        </div>
       </SectionBlock>
-
-      <ProviderDetails provider={asrProvider} providerConfig={providerConfig} />
-
-      <ProviderCapabilityMatrix activeProvider={asrProvider} />
 
       <ProviderCredentialsSection values={values} setters={setters} disabled={disabled} />
 
-      <SectionBlock title="安全" icon={<WarningIcon className="h-3.5 w-3.5" />}>
+      <SectionBlock title="检查与安全" icon={<WarningIcon className="h-4 w-4" />}>
         <SettingRow
           label="配置诊断"
-          description="检查当前 Provider 的必填项、输入限制和浏览器调用条件。"
+          description="检查当前提供商的必填项、输入限制和浏览器调用条件。"
           icon={<WarningIcon className="h-4 w-4" />}
         >
           <div className="flex flex-wrap items-center justify-end gap-2">
@@ -241,7 +250,7 @@ export const ApiSettingsSection: React.FC<ApiSettingsSectionProps> = ({ values, 
           </div>
         </SettingRow>
         {diagnosticReport && (
-          <div className="space-y-2 px-2 py-3">
+          <div className="space-y-2 px-2 py-2">
             {diagnosticReport.checks.map((check) => (
               <div
                 key={check.label}
@@ -268,6 +277,25 @@ export const ApiSettingsSection: React.FC<ApiSettingsSectionProps> = ({ values, 
           </button>
         </SettingRow>
       </SectionBlock>
+
+      <CollapsibleSection
+        title="能力说明与对比"
+        icon={<ServerIcon className="h-4 w-4" />}
+        description="查看当前提供商详情，以及各服务的能力差异。"
+      >
+        <div className="space-y-4">
+          <ProviderSummary
+            title={currentProviderMeta.summaryTitle}
+            details={getProviderSummaryDetails(providerConfig)}
+            note={currentProviderMeta.summaryNote}
+          />
+          <ProviderCapabilities provider={asrProvider} />
+          <div>
+            <p className="mb-2 text-xs font-medium text-[var(--theme-text-secondary)]">提供商能力矩阵</p>
+            <ProviderCapabilityMatrix activeProvider={asrProvider} />
+          </div>
+        </div>
+      </CollapsibleSection>
     </div>
   );
 };

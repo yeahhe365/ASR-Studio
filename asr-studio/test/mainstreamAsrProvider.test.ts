@@ -7,7 +7,10 @@ import {
   ELEVENLABS_SPEECH_TO_TEXT_URL,
   OPENAI_AUDIO_TRANSCRIPTIONS_URL,
 } from '../constants.ts';
-import { transcribeWithMainstreamAsr } from '../services/providers/mainstreamAsrProvider.ts';
+import {
+  resolveOpenAiCompatibleResponseFormat,
+  transcribeWithMainstreamAsr,
+} from '../services/providers/mainstreamAsrProvider.ts';
 import { Language, MainstreamAsrModel } from '../types.ts';
 
 type FetchCall = {
@@ -90,7 +93,7 @@ describe('transcribeWithMainstreamAsr', () => {
     assert.equal(body.get('model'), 'gpt-4o-transcribe');
     assert.equal(body.get('language'), 'en');
     assert.equal(body.get('prompt'), 'Project name: ASR Studio');
-    assert.equal(body.get('response_format'), 'verbose_json');
+    assert.equal(body.get('response_format'), 'json');
     assert.equal(result.transcription, 'Hello from ASR Studio.');
     assert.equal(result.detectedLanguage, 'en');
     assert.deepEqual(result.segments?.[0], {
@@ -101,6 +104,62 @@ describe('transcribeWithMainstreamAsr', () => {
       confidence: 0.98,
       speaker: undefined,
     });
+  });
+
+  test('uses diarized_json for gpt-4o-transcribe-diarize and verbose_json for whisper-1', async () => {
+    assert.equal(resolveOpenAiCompatibleResponseFormat('gpt-4o-transcribe'), 'json');
+    assert.equal(resolveOpenAiCompatibleResponseFormat('gpt-4o-mini-transcribe'), 'json');
+    assert.equal(resolveOpenAiCompatibleResponseFormat('gpt-4o-transcribe-diarize'), 'diarized_json');
+    assert.equal(resolveOpenAiCompatibleResponseFormat('whisper-1'), 'verbose_json');
+    assert.equal(resolveOpenAiCompatibleResponseFormat('whisper-large-v3'), 'verbose_json');
+
+    const calls: FetchCall[] = [];
+    globalThis.fetch = (async (input: RequestInfo | URL, init?: RequestInit) => {
+      calls.push({ input, init });
+      return new Response(
+        JSON.stringify({
+          text: 'Speaker diarized result.',
+          language: 'en',
+          segments: [{ id: 0, text: 'Speaker diarized result.', start: 0, end: 1.2, speaker: 'A' }],
+        }),
+        { status: 200, headers: { 'Content-Type': 'application/json' } },
+      );
+    }) as typeof fetch;
+
+    await transcribeWithMainstreamAsr(
+      new File(['audio'], 'meeting.wav', { type: 'audio/wav' }),
+      '',
+      Language.ENGLISH,
+      false,
+      {
+        model: MainstreamAsrModel.OPENAI_GPT_4O_TRANSCRIBE_DIARIZE,
+        apiKey: 'openai-key',
+        baseUrl: '',
+      },
+      new AbortController().signal,
+    );
+
+    const diarizeBody = calls[0].init?.body as FormData;
+    assert.equal(diarizeBody.get('model'), 'gpt-4o-transcribe-diarize');
+    assert.equal(diarizeBody.get('response_format'), 'diarized_json');
+
+    calls.length = 0;
+    await transcribeWithMainstreamAsr(
+      new File(['audio'], 'meeting.wav', { type: 'audio/wav' }),
+      '',
+      Language.ENGLISH,
+      false,
+      {
+        model: MainstreamAsrModel.OPENAI_WHISPER_1,
+        apiKey: 'openai-key',
+        baseUrl: '',
+      },
+      new AbortController().signal,
+    );
+
+    const whisperBody = calls[0].init?.body as FormData;
+    assert.equal(whisperBody.get('model'), 'whisper-1');
+    assert.equal(whisperBody.get('response_format'), 'verbose_json');
   });
 
   test('calls Deepgram listen API with token auth and parses utterance segments', async () => {

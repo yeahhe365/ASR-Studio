@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useId, useState } from 'react';
+import { ChevronDown } from 'lucide-react';
 
 export const inputClassName =
   'w-full rounded-md border border-[var(--theme-border-secondary)] bg-[var(--theme-bg-input)] px-3 py-2.5 text-sm text-[var(--theme-text-primary)] shadow-sm transition-all duration-200 placeholder:text-[var(--theme-text-tertiary)] focus:border-[var(--theme-border-focus)] focus:outline-none focus:ring-2 focus:ring-[var(--theme-border-focus)]/20 disabled:cursor-not-allowed disabled:opacity-60';
@@ -22,7 +23,8 @@ export const ToggleSwitch: React.FC<{
   <button
     type="button"
     id={id}
-    onClick={() => {
+    onClick={(event) => {
+      event.stopPropagation();
       if (!disabled) {
         onChange(!enabled);
       }
@@ -48,15 +50,68 @@ export const SectionBlock: React.FC<{
   icon?: React.ReactNode;
   children: React.ReactNode;
   className?: string;
-}> = ({ title, icon, children, className }) => (
-  <section className={`py-2 ${className || ''}`}>
-    <h4 className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase text-[var(--theme-text-tertiary)]">
-      {icon}
-      {title}
-    </h4>
-    <div className="space-y-1">{children}</div>
+  description?: string;
+}> = ({ title, icon, children, className, description }) => (
+  <section
+    className={`rounded-lg border border-[var(--theme-border-secondary)]/70 bg-[var(--theme-bg-secondary)]/30 px-3 py-4 sm:px-4 ${className || ''}`}
+  >
+    <div className="mb-3">
+      <h4 className="flex items-center gap-2 text-sm font-semibold text-[var(--theme-text-primary)]">
+        {icon && <span className="text-[var(--theme-text-tertiary)]">{icon}</span>}
+        {title}
+      </h4>
+      {description && <p className="mt-1 text-xs leading-relaxed text-[var(--theme-text-tertiary)]">{description}</p>}
+    </div>
+    <div className="space-y-0.5">{children}</div>
   </section>
 );
+
+export const CollapsibleSection: React.FC<{
+  title: string;
+  icon?: React.ReactNode;
+  children: React.ReactNode;
+  defaultOpen?: boolean;
+  description?: string;
+  className?: string;
+}> = ({ title, icon, children, defaultOpen = false, description, className }) => {
+  const [isOpen, setIsOpen] = useState(defaultOpen);
+  const contentId = useId();
+
+  return (
+    <section
+      className={`rounded-lg border border-[var(--theme-border-secondary)]/70 bg-[var(--theme-bg-secondary)]/20 ${className || ''}`}
+    >
+      <button
+        type="button"
+        onClick={() => setIsOpen((open) => !open)}
+        aria-expanded={isOpen}
+        aria-controls={contentId}
+        className="flex w-full items-start gap-3 px-3 py-3.5 text-left transition-colors hover:bg-[var(--theme-bg-tertiary)]/30 sm:px-4"
+      >
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-2">
+            {icon && <span className="text-[var(--theme-text-tertiary)]">{icon}</span>}
+            <span className="text-sm font-semibold text-[var(--theme-text-primary)]">{title}</span>
+          </div>
+          {description && (
+            <p className="mt-1 text-xs leading-relaxed text-[var(--theme-text-tertiary)]">{description}</p>
+          )}
+        </div>
+        <ChevronDown
+          className={`mt-0.5 h-4 w-4 flex-shrink-0 text-[var(--theme-text-tertiary)] transition-transform duration-200 ${
+            isOpen ? 'rotate-180' : ''
+          }`}
+          aria-hidden
+        />
+      </button>
+      {isOpen && (
+        <div id={contentId} className="space-y-0.5 border-t border-[var(--theme-border-secondary)]/60 px-3 py-3 sm:px-4">
+          {children}
+        </div>
+      )}
+    </section>
+  );
+};
 
 export const SettingRow: React.FC<{
   label: string;
@@ -66,40 +121,93 @@ export const SettingRow: React.FC<{
   className?: string;
   labelClassName?: string;
   layout?: 'inline' | 'stacked';
-}> = ({ label, description, icon, children, className, labelClassName, layout = 'inline' }) => (
-  <div
-    className={`flex flex-col gap-3 rounded-md px-2 py-3 transition-colors hover:bg-[var(--theme-bg-tertiary)]/25 ${
-      layout === 'stacked' ? 'sm:flex-col sm:items-stretch sm:justify-start' : 'sm:flex-row sm:items-center sm:justify-between'
-    } ${className || ''}`}
-  >
-    <div className={`flex min-w-0 items-start gap-3 ${layout === 'stacked' ? 'pr-0' : 'pr-4'}`}>
-      {icon && (
-        <div className={`mt-0.5 flex-shrink-0 ${labelClassName ? 'opacity-90' : 'text-[var(--theme-text-tertiary)]'}`}>
-          {icon}
-        </div>
-      )}
-      <div className="min-w-0">
-        <p className={`text-sm font-medium ${labelClassName || 'text-[var(--theme-text-primary)]'}`}>{label}</p>
-        {description && (
-          <p
-            className={`mt-0.5 text-xs leading-relaxed ${labelClassName ? 'opacity-75' : 'text-[var(--theme-text-tertiary)]'}`}
-          >
-            {description}
-          </p>
+  htmlFor?: string;
+  onActivate?: () => void;
+  disabled?: boolean;
+}> = ({
+  label,
+  description,
+  icon,
+  children,
+  className,
+  labelClassName,
+  layout = 'inline',
+  htmlFor,
+  onActivate,
+  disabled,
+}) => {
+  const isInteractive = Boolean(onActivate) && !disabled;
+
+  const handleActivate = () => {
+    if (isInteractive) {
+      onActivate?.();
+    }
+  };
+
+  return (
+    <div
+      role={isInteractive ? 'button' : undefined}
+      tabIndex={isInteractive ? 0 : undefined}
+      onClick={isInteractive ? handleActivate : undefined}
+      onKeyDown={
+        isInteractive
+          ? (event) => {
+              if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                handleActivate();
+              }
+            }
+          : undefined
+      }
+      className={`flex flex-col gap-3 rounded-md px-2 py-3 transition-colors ${
+        isInteractive
+          ? 'cursor-pointer hover:bg-[var(--theme-bg-tertiary)]/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--theme-border-focus)]'
+          : 'hover:bg-[var(--theme-bg-tertiary)]/25'
+      } ${
+        layout === 'stacked'
+          ? 'sm:flex-col sm:items-stretch sm:justify-start'
+          : 'sm:flex-row sm:items-center sm:justify-between'
+      } ${disabled ? 'opacity-60' : ''} ${className || ''}`}
+    >
+      <div className={`flex min-w-0 items-start gap-3 ${layout === 'stacked' ? 'pr-0' : 'pr-4'}`}>
+        {icon && (
+          <div className={`mt-0.5 flex-shrink-0 ${labelClassName ? 'opacity-90' : 'text-[var(--theme-text-tertiary)]'}`}>
+            {icon}
+          </div>
         )}
+        <div className="min-w-0">
+          {htmlFor && !isInteractive ? (
+            <label
+              htmlFor={htmlFor}
+              className={`text-sm font-medium ${labelClassName || 'text-[var(--theme-text-primary)]'}`}
+            >
+              {label}
+            </label>
+          ) : (
+            <p className={`text-sm font-medium ${labelClassName || 'text-[var(--theme-text-primary)]'}`}>{label}</p>
+          )}
+          {description && (
+            <p
+              className={`mt-0.5 text-xs leading-relaxed ${labelClassName ? 'opacity-75' : 'text-[var(--theme-text-tertiary)]'}`}
+            >
+              {description}
+            </p>
+          )}
+        </div>
+      </div>
+      <div
+        className={
+          layout === 'stacked'
+            ? 'flex w-full min-w-0 items-center gap-2 sm:ml-0 sm:w-full sm:justify-start'
+            : 'flex w-full flex-shrink-0 items-center gap-2 sm:ml-4 sm:w-auto sm:justify-end'
+        }
+        onClick={isInteractive ? (event) => event.stopPropagation() : undefined}
+      >
+        {children}
       </div>
     </div>
-    <div
-      className={
-        layout === 'stacked'
-          ? 'flex w-full min-w-0 items-center gap-2 sm:ml-0 sm:w-full sm:justify-start'
-          : 'flex w-full flex-shrink-0 items-center gap-2 sm:ml-4 sm:w-auto sm:justify-end'
-      }
-    >
-      {children}
-    </div>
-  </div>
-);
+  );
+};
 
 export const SegmentedControl = <T extends string>({
   ariaLabel,

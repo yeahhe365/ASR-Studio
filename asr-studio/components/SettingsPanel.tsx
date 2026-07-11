@@ -36,6 +36,10 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
   const [pendingOperation, setPendingOperation] = useState<SettingsDataOperation | null>(null);
   const pendingOperationRef = useRef<SettingsDataOperation | null>(null);
   const isMountedRef = useRef(true);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const contentScrollRef = useRef<HTMLDivElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const previouslyFocusedRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     return () => {
@@ -43,9 +47,36 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
     };
   }, []);
 
+  useEffect(() => {
+    if (!isOpen) {
+      return;
+    }
+
+    previouslyFocusedRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+
+    const focusTimer = window.setTimeout(() => {
+      closeButtonRef.current?.focus();
+    }, 0);
+
+    return () => {
+      window.clearTimeout(focusTimer);
+      previouslyFocusedRef.current?.focus?.();
+      previouslyFocusedRef.current = null;
+    };
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (!isOpen) {
+      return;
+    }
+
+    contentScrollRef.current?.scrollTo({ top: 0 });
+  }, [activeTab, isOpen]);
+
   const tabsById = useMemo(() => new Map(tabs.map((tab) => [tab.id, tab])), []);
   const activeTabDescriptor = tabsById.get(activeTab);
   const isOperationPending = Boolean(pendingOperation);
+  const isConfirmOpen = isConfirmingClear || isConfirmingRestore;
 
   const handleClose = useCallback(() => {
     if (pendingOperationRef.current) {
@@ -54,6 +85,53 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
 
     onClose();
   }, [onClose]);
+
+  useEffect(() => {
+    if (!isOpen) {
+      return;
+    }
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        if (isConfirmOpen) {
+          if (!pendingOperationRef.current) {
+            setIsConfirmingClear(false);
+            setIsConfirmingRestore(false);
+          }
+          return;
+        }
+
+        handleClose();
+        return;
+      }
+
+      if (event.key !== 'Tab' || !panelRef.current) {
+        return;
+      }
+
+      const focusable = panelRef.current.querySelectorAll<HTMLElement>(
+        'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+      );
+      if (focusable.length === 0) {
+        return;
+      }
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      const active = document.activeElement;
+
+      if (event.shiftKey && active === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && active === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [handleClose, isConfirmOpen, isOpen]);
 
   const runOperation = useCallback(async <T,>(operation: SettingsDataOperation, action: () => T | Promise<T>) => {
     if (pendingOperationRef.current) {
@@ -153,12 +231,14 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
         onClick={handleClose}
       >
         <div
+          ref={panelRef}
           className="flex h-[100dvh] w-full transform flex-col overflow-hidden bg-[var(--theme-bg-primary)] text-[var(--theme-text-primary)] shadow-2xl transition-all sm:h-[85vh] sm:max-h-[800px] sm:w-[90vw] sm:max-w-6xl sm:rounded-lg md:flex-row"
           onClick={(event) => event.stopPropagation()}
         >
           <aside className="flex w-full flex-shrink-0 flex-col border-b border-[var(--theme-border-primary)] bg-[var(--theme-bg-secondary)] md:w-64 md:border-b-0 md:border-r">
             <div className="flex flex-shrink-0 items-center justify-between px-4 py-3 md:px-5 md:py-5">
               <button
+                ref={closeButtonRef}
                 type="button"
                 onClick={handleClose}
                 disabled={isOperationPending}
@@ -220,8 +300,11 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
           </aside>
 
           <main className="relative flex min-w-0 flex-1 flex-col overflow-hidden bg-[var(--theme-bg-primary)]">
-            <div className="custom-scrollbar flex-1 overflow-y-auto overflow-x-hidden px-4 py-4 sm:px-6 sm:py-6 md:px-8 md:py-8">
-              <div className="mx-auto hidden w-full max-w-3xl pb-6 md:block">
+            <div
+              ref={contentScrollRef}
+              className="custom-scrollbar flex-1 overflow-y-auto overflow-x-hidden px-4 py-4 sm:px-6 sm:py-6 md:px-8 md:py-8"
+            >
+              <div className="mx-auto w-full max-w-3xl pb-5">
                 <h2 className="text-xl font-semibold text-[var(--theme-text-primary)]">{activeTabDescriptor?.label}</h2>
                 <p className="mt-1 text-sm text-[var(--theme-text-tertiary)]">{activeTabDescriptor?.description}</p>
               </div>

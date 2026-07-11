@@ -5,10 +5,10 @@ import { SlidersIcon } from '../icons/SlidersIcon';
 import type { SettingTab, SettingTabDescriptor } from './settingsTypes';
 
 export const tabs: SettingTabDescriptor[] = [
-  { id: 'api', label: 'API', description: '配置识别服务和密钥。', Icon: KeyRound },
-  { id: 'recognition', label: '识别', description: '调整语言、提示和音频处理。', Icon: SlidersIcon },
-  { id: 'interface', label: '界面', description: '调整外观和输出偏好。', Icon: LayoutPanelLeft },
-  { id: 'data', label: '数据', description: '管理应用安装、重置和历史记录。', Icon: DatabaseIcon },
+  { id: 'api', label: 'API', description: '选择识别服务、填写密钥，并检查配置是否可用。', Icon: KeyRound },
+  { id: 'recognition', label: '识别', description: '语言、录音设备与音频处理；高级选项可折叠展开。', Icon: SlidersIcon },
+  { id: 'interface', label: '界面', description: '主题与结果输出偏好。', Icon: LayoutPanelLeft },
+  { id: 'data', label: '数据', description: '安装、导入、缓存清理与危险操作。', Icon: DatabaseIcon },
   { id: 'about', label: '关于', description: '查看版本和项目入口。', Icon: InfoIcon },
 ];
 
